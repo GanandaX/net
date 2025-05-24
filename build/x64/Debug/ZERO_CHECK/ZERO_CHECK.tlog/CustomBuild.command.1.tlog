@@ -1,0 +1,10 @@
+^D:\WORKSPACE\NET\BUILD\CMAKEFILES\9DB327FED3C05B3FDF000E8F4C9198E8\GENERATE.STAMP.RULE
+setlocal
+E:\dev\CMake\bin\cmake.exe -SD:/workSpace/net -BD:/workSpace/net/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/workSpace/net/build/net.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
