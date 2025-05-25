@@ -77,7 +77,6 @@ n_list_node_t *n_list_remove(n_list_t *list, n_list_node_t *node) {
     debug_assert(list != (void *) 0, "不应为空");
     debug_assert(node != (void *) 0, "不应为空");
 
-
     if (list->first == node) {
         // 头节点
         list->first = node->next;

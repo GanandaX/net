@@ -89,9 +89,33 @@ build CMakeFiles/net.dir/src/net/src/ex_msg.c.obj: C_COMPILER__net_unscanned_Deb
   OBJECT_DIR = CMakeFiles\net.dir
   OBJECT_FILE_DIR = CMakeFiles\net.dir\src\net\src
 
+build CMakeFiles/net.dir/src/net/src/fix_queue.c.obj: C_COMPILER__net_unscanned_Debug D$:/workSpace/net/src/net/src/fix_queue.c || cmake_object_order_depends_target_net
+  DEFINES = -DNET_DRIVER_PCAP -DSYS_PLAT_WINDOWS -D_CRT_SECURE_NO_WARNINGS
+  DEP_FILE = CMakeFiles\net.dir\src\net\src\fix_queue.c.obj.d
+  FLAGS = -g -std=gnu99 -fdiagnostics-color=always
+  INCLUDES = -ID:/workSpace/net -ID:/workSpace/net/npcap/Include -ID:/workSpace/net/src/net/net -ID:/workSpace/net/src/plat -ID:/workSpace/net/src/app
+  OBJECT_DIR = CMakeFiles\net.dir
+  OBJECT_FILE_DIR = CMakeFiles\net.dir\src\net\src
+
+build CMakeFiles/net.dir/src/net/src/m_block.c.obj: C_COMPILER__net_unscanned_Debug D$:/workSpace/net/src/net/src/m_block.c || cmake_object_order_depends_target_net
+  DEFINES = -DNET_DRIVER_PCAP -DSYS_PLAT_WINDOWS -D_CRT_SECURE_NO_WARNINGS
+  DEP_FILE = CMakeFiles\net.dir\src\net\src\m_block.c.obj.d
+  FLAGS = -g -std=gnu99 -fdiagnostics-color=always
+  INCLUDES = -ID:/workSpace/net -ID:/workSpace/net/npcap/Include -ID:/workSpace/net/src/net/net -ID:/workSpace/net/src/plat -ID:/workSpace/net/src/app
+  OBJECT_DIR = CMakeFiles\net.dir
+  OBJECT_FILE_DIR = CMakeFiles\net.dir\src\net\src
+
 build CMakeFiles/net.dir/src/net/src/n_list.c.obj: C_COMPILER__net_unscanned_Debug D$:/workSpace/net/src/net/src/n_list.c || cmake_object_order_depends_target_net
   DEFINES = -DNET_DRIVER_PCAP -DSYS_PLAT_WINDOWS -D_CRT_SECURE_NO_WARNINGS
   DEP_FILE = CMakeFiles\net.dir\src\net\src\n_list.c.obj.d
+  FLAGS = -g -std=gnu99 -fdiagnostics-color=always
+  INCLUDES = -ID:/workSpace/net -ID:/workSpace/net/npcap/Include -ID:/workSpace/net/src/net/net -ID:/workSpace/net/src/plat -ID:/workSpace/net/src/app
+  OBJECT_DIR = CMakeFiles\net.dir
+  OBJECT_FILE_DIR = CMakeFiles\net.dir\src\net\src
+
+build CMakeFiles/net.dir/src/net/src/n_locker.c.obj: C_COMPILER__net_unscanned_Debug D$:/workSpace/net/src/net/src/n_locker.c || cmake_object_order_depends_target_net
+  DEFINES = -DNET_DRIVER_PCAP -DSYS_PLAT_WINDOWS -D_CRT_SECURE_NO_WARNINGS
+  DEP_FILE = CMakeFiles\net.dir\src\net\src\n_locker.c.obj.d
   FLAGS = -g -std=gnu99 -fdiagnostics-color=always
   INCLUDES = -ID:/workSpace/net -ID:/workSpace/net/npcap/Include -ID:/workSpace/net/src/net/net -ID:/workSpace/net/src/plat -ID:/workSpace/net/src/app
   OBJECT_DIR = CMakeFiles\net.dir
@@ -137,7 +161,7 @@ build CMakeFiles/net.dir/src/plat/sys_plat.c.obj: C_COMPILER__net_unscanned_Debu
 #############################################
 # Link the executable net.exe
 
-build net.exe: C_EXECUTABLE_LINKER__net_Debug CMakeFiles/net.dir/src/app/echo/tcp_echo_client.c.obj CMakeFiles/net.dir/src/app/echo/tcp_echo_server.c.obj CMakeFiles/net.dir/src/app/test/main.c.obj CMakeFiles/net.dir/src/net/src/debug.c.obj CMakeFiles/net.dir/src/net/src/ex_msg.c.obj CMakeFiles/net.dir/src/net/src/n_list.c.obj CMakeFiles/net.dir/src/net/src/net.c.obj CMakeFiles/net.dir/src/plat/net_plat.c.obj CMakeFiles/net.dir/src/plat/netif_pcap.c.obj CMakeFiles/net.dir/src/plat/sys_plat.c.obj
+build net.exe: C_EXECUTABLE_LINKER__net_Debug CMakeFiles/net.dir/src/app/echo/tcp_echo_client.c.obj CMakeFiles/net.dir/src/app/echo/tcp_echo_server.c.obj CMakeFiles/net.dir/src/app/test/main.c.obj CMakeFiles/net.dir/src/net/src/debug.c.obj CMakeFiles/net.dir/src/net/src/ex_msg.c.obj CMakeFiles/net.dir/src/net/src/fix_queue.c.obj CMakeFiles/net.dir/src/net/src/m_block.c.obj CMakeFiles/net.dir/src/net/src/n_list.c.obj CMakeFiles/net.dir/src/net/src/n_locker.c.obj CMakeFiles/net.dir/src/net/src/net.c.obj CMakeFiles/net.dir/src/plat/net_plat.c.obj CMakeFiles/net.dir/src/plat/netif_pcap.c.obj CMakeFiles/net.dir/src/plat/sys_plat.c.obj
   FLAGS = -g
   LINK_LIBRARIES = -lwpcap  -lpacket  -lWs2_32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   LINK_PATH = -LD:/workSpace/net/npcap/Lib/x64

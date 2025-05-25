@@ -6,6 +6,7 @@
 #define NET_NET_PLAT_H
 
 #include "net_status.h"
+#include "sys_plat.h"
 
 net_status_t net_plat_init();
 

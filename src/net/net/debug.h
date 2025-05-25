@@ -5,6 +5,7 @@
 #ifndef NET_DEBUG_H
 #define NET_DEBUG_H
 
+#include "net_config.h"
 
 #define DEBUG_STYLE_INFO "\033[0m"
 #define DEBUG_STYLE_WARNING "\033[33m"

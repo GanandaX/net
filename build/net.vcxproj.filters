@@ -16,7 +16,16 @@
     <ClCompile Include="D:\workSpace\net\src\net\src\ex_msg.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="D:\workSpace\net\src\net\src\fix_queue.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\workSpace\net\src\net\src\m_block.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="D:\workSpace\net\src\net\src\n_list.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\workSpace\net\src\net\src\n_locker.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D:\workSpace\net\src\net\src\net.c">
@@ -45,13 +54,28 @@
     <ClInclude Include="D:\workSpace\net\src\net\net\ex_msg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="D:\workSpace\net\src\net\net\fix_queue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\workSpace\net\src\net\net\m_block.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="D:\workSpace\net\src\net\net\n_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\workSpace\net\src\net\net\n_locker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="D:\workSpace\net\src\net\net\net.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="D:\workSpace\net\src\net\net\net_config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="D:\workSpace\net\src\net\net\net_status.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\workSpace\net\src\net\net\sys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="D:\workSpace\net\src\plat\net_plat.h">

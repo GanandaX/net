@@ -2,13 +2,16 @@
 // Created by Administrator on 2025/5/21.
 //
 #include "netif_pcap.h"
-#include "sys_plat.h"
+#include "sys.h"
+#include "ex_msg.h"
+
 
 static void rx_thread(void *arg) {
     plat_printf("receive thread is running ...\n");
 
     while (1) {
-        sys_sleep(10);
+        sys_sleep(1000);
+        exmsg_netif_in();
     }
 }
 

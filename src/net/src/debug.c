@@ -2,10 +2,10 @@
 // Created by Administrator on 2025/5/22.
 //
 #include "debug.h"
-#include "sys_plat.h"
+#include "sys.h"
 #include "stdarg.h"
 
-void debug_print(unsigned char input_level, unsigned function_level, char *filePath, const char *func, int line, const char *format, ...) {
+void debug_print(const unsigned char input_level, unsigned function_level, char *filePath, const char *func, int line, const char *format, ...) {
 
     if (input_level <= function_level) {
 

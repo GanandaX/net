@@ -1,0 +1,16 @@
+//
+// Created by Administrator on 2025/5/24.
+//
+
+#ifndef NET_CONFIG_H
+#define NET_CONFIG_H
+
+#define DEBUG_MSG DEBUG_INFO
+#define DEBUG_M_BLOCK DEBUG_ERROR
+#define DEBUG_QUEUE DEBUG_ERROR
+#define DEBUG_QUEUE DEBUG_ERROR
+
+#define EXMSG_MSG_CNT 10
+#define LOCKER_TYPE N_LOCKER_THREAD
+
+#endif //NET_CONFIG_H

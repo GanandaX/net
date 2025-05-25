@@ -18,6 +18,7 @@
 #include "netif_pcap.h"
 #include "debug.h"
 #include "n_list.h"
+#include "m_block.h"
 
 sys_sem_t sem;
 int count;
@@ -31,10 +32,8 @@ unsigned char write_index;
 unsigned char total_count;
 
 void thread1_entry(void *arg) {
-
     // 读线程
     while (1) {
-
         sys_sem_wait(read_sem, 0);
 
         unsigned char data = buffer[read_index++];
@@ -64,11 +63,9 @@ void thread1_entry(void *arg) {
 }
 
 void thread2_entry(void *arg) {
-
     unsigned char number = 1;
     // 写线程
     while (1) {
-
         sys_sem_wait(write_sem, 0);
 
         buffer[write_index++] = number++;
@@ -112,7 +109,7 @@ typedef struct _t_node_t {
 
 void travel_list_test(n_list_node_t *node) {
     t_node_t *t_node = n_list_entity(node, node, t_node_t);
-//    t_node_t  *t_node = (t_node_t *)((char *)node - (char *)(&(((t_node_t*)0))->node));
+    //    t_node_t  *t_node = (t_node_t *)((char *)node - (char *)(&(((t_node_t*)0))->node));
     debug_info(DEBUG_INFO, "%d\n", t_node->id);
 }
 
@@ -171,22 +168,43 @@ void n_list_test() {
     n_list_travel(&list, travel_list_test);
     debug_info(DEBUG_INFO, "\n");
 
-   /* for (int i = 0; i < NODE_CNT; ++i) {
-        n_list_node_t *n_node = n_list_remove_last(&list);
-        if (n_node == (n_list_node_t *) 0) {
-            debug_error(DEBUG_ERROR, "node 删除错误");
-        }
+    /* for (int i = 0; i < NODE_CNT; ++i) {
+         n_list_node_t *n_node = n_list_remove_last(&list);
+         if (n_node == (n_list_node_t *) 0) {
+             debug_error(DEBUG_ERROR, "node 删除错误");
+         }
 
-        debug_info(DEBUG_INFO, "id: %d  count: %d", n_list_entity(n_node, node, t_node_t)->id, list.count);
-    }*/
+         debug_info(DEBUG_INFO, "id: %d  count: %d", n_list_entity(n_node, node, t_node_t)->id, list.count);
+     }*/
+}
+
+void m_block_test(void) {
+    m_block_t b_list;
+    static uint8_t buffer[10][100];
+
+    m_block_init(&b_list, buffer, 100, 10, N_LOCKER_THREAD);
+
+    void *tmp[10];
+    for (int i = 0; i < 10; ++i) {
+        tmp[i] = m_block_alloc(&b_list, 0);
+        plat_printf("block: %p, free_count: %d\n", tmp[i], m_block_free_count(&b_list));
+    }
+
+    for (int i = 0; i < 10; ++i) {
+        m_block_free(&b_list, tmp[i]);
+        plat_printf("free_count: %d\n", m_block_free_count(&b_list));
+    }
+
+    m_block_destroy(&b_list);
 }
 
 void base_test() {
-    n_list_test();
+    // n_list_test();
+    m_block_test();
 }
 
 int main(void) {
-    setvbuf(stdout, NULL, _IONBF, 0);  // 设置 stdout 为无缓冲
+    setvbuf(stdout, NULL, _IONBF, 0); // 设置 stdout 为无缓冲
 
     /*  plat_printf("*** INFO ***\n");
       debug_info(DEBUG_INFO, "json1");
@@ -204,17 +222,16 @@ int main(void) {
       debug_error(DEBUG_ERROR, "json3");*/
 
 
-//    debug_assert(3 == 0, "3不等于0");
+    //    debug_assert(3 == 0, "3不等于0");
 
 
-    base_test();
+    // base_test();
 
     net_init();
-    net_start();
     net_dev_init();
+    net_start();
 
     while (1) {
         sys_sleep(10);
     }
-    return 0;
 }
