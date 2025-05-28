@@ -18,11 +18,16 @@ typedef struct _m_block_t {
 
 net_status_t m_block_init(m_block_t *m_block, void *mem, int block_size, int count, n_locker_type_t type);
 
-void *m_block_alloc(const m_block_t *m_block, int ms);
+void *m_block_alloc( m_block_t *m_block, int ms);
 
-int m_block_free_count(const m_block_t *m_block);
+/**
+ * 获取当前块空闲数量
+ * @param m_block 块指针
+ * @return 空闲的数量
+ */
+int m_block_free_count( m_block_t *m_block);
 
-void m_block_free(const m_block_t *m_block, void *block);
+void m_block_free(m_block_t *m_block, void *block);
 
-void m_block_destroy(const m_block_t *m_block);
+void m_block_destroy( m_block_t *m_block);
 #endif //M_BLOCK_H

@@ -26,7 +26,6 @@ void n_list_insert_first(n_list_t *list, n_list_node_t *node) {
         list->first = node;
     }
     list->count++;
-
 }
 
 
@@ -46,10 +45,9 @@ void n_list_insert_last(n_list_t *list, n_list_node_t *node) {
         list->last = node;
     }
     list->count++;
-
 }
 
-void n_list_travel(n_list_t *list, void(*fun)(n_list_node_t *)) {
+void n_list_travel(n_list_t *list, void (*fun)(n_list_node_t *)) {
     debug_assert(list != (void *) 0, "不应为空");
     debug_assert(fun != 0, "不应为空");
 
@@ -69,6 +67,7 @@ unsigned char n_list_contain(n_list_t *list, n_list_node_t *node) {
         if (current_node == node) {
             return 1;
         }
+        current_node = current_node->next;
     }
     return 0;
 }
@@ -106,6 +105,8 @@ n_list_node_t *n_list_remove(n_list_t *list, n_list_node_t *node) {
         node->pre->next = node->next;
     }
 
+    node->pre = node->next = (void *) 0;
+
     list->count--;
     return node;
 }
@@ -126,7 +127,6 @@ void n_list_insert_after(n_list_t *list, n_list_node_t *pre, n_list_node_t *node
         node->next = pre->next;
         node->pre->next = node;
         node->next->pre = node;
+        list->count++;
     }
-
-    list->count++;
 }

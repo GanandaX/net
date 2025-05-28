@@ -5,8 +5,8 @@
 #include "debug.h"
 
 net_status_t m_block_init(m_block_t *m_block, void *mem,
-                          const int block_size, const int count,
-                          const n_locker_type_t type) {
+                          int block_size, int count,
+                          n_locker_type_t type) {
     debug_assert(m_block != (void *)0, "block 为空");
 
     uint8_t *buffer = (uint8_t *) mem;
@@ -19,7 +19,7 @@ net_status_t m_block_init(m_block_t *m_block, void *mem,
 
     m_block->start = mem;
 
-    const net_status_t locker_status = n_locker_init(&m_block->locker, type);
+    net_status_t locker_status = n_locker_init(&m_block->locker, type);
     if (locker_status == NET_ERROR) {
         debug_error(DEBUG_M_BLOCK, "create locker failed.");
         return NET_ERROR;
@@ -38,18 +38,18 @@ net_status_t m_block_init(m_block_t *m_block, void *mem,
 }
 
 
-void *m_block_alloc(const m_block_t *m_block, const int ms) {
+void *m_block_alloc(m_block_t *m_block, int ms) {
     debug_assert(m_block != (void *)0, "block 为空");
 
     if (ms < 0 || m_block->locker.type == N_LOCKER_NONE) {
         n_locker_lock(&m_block->locker);
-        const int count = m_block->free_list.count;
+        int count = m_block->free_list.count;
 
         if (count == 0) {
             n_locker_unlock(&m_block->locker);
             return (void *) 0;
         } else {
-            n_list_node_t *block = n_list_remove_first(m_block);
+            n_list_node_t *block = n_list_remove_first(&m_block->free_list);
             n_locker_unlock(&m_block->locker);
             return block;
         }
@@ -58,23 +58,23 @@ void *m_block_alloc(const m_block_t *m_block, const int ms) {
             return (void *) 0;
         } else {
             n_locker_lock(&m_block->locker);
-            n_list_node_t *block = n_list_remove_first(m_block);
+            n_list_node_t *block = n_list_remove_first(&m_block->free_list);
             n_locker_unlock(&m_block->locker);
             return block;
         }
     }
 }
 
-int m_block_free_count(const m_block_t *m_block) {
+int m_block_free_count(m_block_t *m_block) {
     n_locker_lock(&m_block->locker);
-    const int count = n_list_count(&m_block->free_list);
+    int count = n_list_count(&m_block->free_list);
     n_locker_unlock(&m_block->locker);
     return count;
 }
 
-void m_block_free(const m_block_t *m_block, void *block) {
+void m_block_free(m_block_t *m_block, void *block) {
     n_locker_lock(&m_block->locker);
-n_list_insert_last(&m_block->free_list, (n_list_node_t *)block);
+    n_list_insert_last(&m_block->free_list, (n_list_node_t *) block);
     n_locker_unlock(&m_block->locker);
 
     if (m_block->locker.type != N_LOCKER_NONE) {
@@ -82,7 +82,7 @@ n_list_insert_last(&m_block->free_list, (n_list_node_t *)block);
     }
 }
 
-void m_block_destroy(const m_block_t *m_block) {
+void m_block_destroy(m_block_t *m_block) {
     if (m_block->locker.type != N_LOCKER_NONE) {
         sys_sem_free(m_block->alloc_sem);
         n_locker_destroy(&m_block->locker);

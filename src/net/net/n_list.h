@@ -29,28 +29,37 @@ static inline n_list_node_t *n_list_node_next(n_list_node_t *node) {
     return node->next;
 }
 
+/*
+ * 将next节点添加为node节点的下一个
+ */
 static inline void n_list_node_set_next(n_list_node_t *node, n_list_node_t *next) {
     debug_assert(node != (n_list_node_t *) 0, "不应为空");
     debug_assert(next != (n_list_node_t *) 0, "不应为空");
 
     next->next = node->next;
     next->pre = node;
-    node->next->pre = next;
+    if (node->next) {
+        node->next->pre = next;
+    }
     node->next = next;
 }
 
+/*
+ * 将pre节点添加为node节点的前一个
+ */
 static inline void n_list_node_set_pre(n_list_node_t *node, n_list_node_t *pre) {
     debug_assert(node != (n_list_node_t *) 0, "不应为空");
     debug_assert(pre != (n_list_node_t *) 0, "不应为空");
 
     pre->pre = node->pre;
     pre->next = node;
-    node->pre->next = pre;
+    if (node->pre) {
+        node->pre->next = pre;
+    }
     node->pre = pre;
 }
 
 typedef struct _n_list_t {
-
     n_list_node_t *first;
     n_list_node_t *last;
     int count;
@@ -88,7 +97,7 @@ void n_list_insert_first(n_list_t *list, n_list_node_t *node);
 
 void n_list_insert_last(n_list_t *list, n_list_node_t *node);
 
-void n_list_travel(n_list_t *list, void(*fun)(n_list_node_t *node));
+void n_list_travel(n_list_t *list, void (*fun)(n_list_node_t *node));
 
 unsigned char n_list_contain(n_list_t *list, n_list_node_t *node);
 
@@ -108,7 +117,6 @@ unsigned char n_list_contain(n_list_t *list, n_list_node_t *node);
 n_list_node_t *n_list_remove(n_list_t *list, n_list_node_t *node);
 
 static inline n_list_node_t *n_list_remove_first(n_list_t *list) {
-
     if (list->first) {
         return n_list_remove(list, list->first);
     }
@@ -116,7 +124,6 @@ static inline n_list_node_t *n_list_remove_first(n_list_t *list) {
 }
 
 static inline n_list_node_t *n_list_remove_last(n_list_t *list) {
-
     if (list->last) {
         return n_list_remove(list, list->last);
     }

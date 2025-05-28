@@ -18,6 +18,7 @@
 
 void debug_print(unsigned char input_level, unsigned function_level, char *filePath, const char *func, int line, const char *format, ...);
 
+#define debug(level, format, ...) debug_print(level, DEBUG_INFO,__FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)
 #define debug_info(level, format, ...) debug_print(level, DEBUG_INFO,__FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)
 #define debug_warning(level, format, ...) debug_print(level, DEBUG_WARNING,__FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)
 #define debug_error(level, format, ...) debug_print(level, DEBUG_ERROR,__FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)
@@ -28,6 +29,7 @@ void debug_print(unsigned char input_level, unsigned function_level, char *fileP
         while(1);                     \
     }                                 \
 
-
+#define DEBUG_DISP_ENABLED(module) (module >= DEBUG_INFO)
+#define DEBUG_DISP_ENABLED(module) (module >= DEBUG_INFO)
 
 #endif //NET_DEBUG_H

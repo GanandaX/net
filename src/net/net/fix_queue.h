@@ -8,6 +8,9 @@
 #include "n_locker.h"
 #include "sys.h"
 
+/*
+ * 定长的消息队列
+ */
 typedef struct _fix_queue_t {
 
     int size;
@@ -15,6 +18,7 @@ typedef struct _fix_queue_t {
     int out_index;
     int count;
 
+    // 这个变量存什么的
     void **buf;
 
     n_locker_t locker;
@@ -24,6 +28,13 @@ typedef struct _fix_queue_t {
 
 net_status_t fix_queue_init(fix_queue_t *queue, void **buf, int size, n_locker_type_t locker_type);
 
+/**
+ *
+ * @param queue
+ * @param msg
+ * @param tmo 等待时间 -1即不等待 0为一直等到有数
+ * @return
+ */
 net_status_t fix_queue_write_in(fix_queue_t *queue, void *msg, int tmo);
 
 void *fix_queue_read_out(fix_queue_t *queue, int tmo);

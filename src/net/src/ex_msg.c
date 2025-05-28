@@ -8,6 +8,7 @@
 #include "fix_queue.h"
 #include "m_block.h"
 
+// msg_block 存放具体信息, msg_queue表示消息队列
 static void *msg_table[EXMSG_MSG_CNT];
 static fix_queue_t msg_queue;
 static exmsg_t msg_buff[EXMSG_MSG_CNT];
