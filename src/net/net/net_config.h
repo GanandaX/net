@@ -5,6 +5,7 @@
 #ifndef NET_CONFIG_H
 #define NET_CONFIG_H
 
+#define DEBUG_NETIF DEBUG_INFO
 #define DEBUG_INIT DEBUG_INFO
 #define DEBUG_PLAT DEBUG_INFO
 #define DEBUG_MSG DEBUG_INFO
@@ -18,5 +19,12 @@
 #define PKT_BLK_SIZE 128
 #define PKT_BLK_CNT 128
 #define PKT_BUF_CNT 128
+
+#define NETIF_HWADDR_SIZE   10
+#define NETIF_NAME_SIZE     10
+#define NETIF_INQ_SIZE        50
+#define NETIF_OUTQ_SIZE       50
+
+#define NETIF_DEV_CNT       10
 
 #endif //NET_CONFIG_H

@@ -10,6 +10,8 @@
 #include "n_list.h"
 #include "fix_queue.h"
 #include "net_config.h"
+#include "net_status.h"
+
 typedef struct _netif_hwaddr_t {
     uint8_t addr[NETIF_HWADDR_SIZE];
     uint8_t len;
@@ -51,5 +53,6 @@ typedef struct _netif_t {
 
 } netif_t;
 
+net_status_t netif_init(void);
 
 #endif //NET_NETIF_H

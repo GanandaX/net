@@ -107,10 +107,8 @@ unsigned char n_list_contain(n_list_t *list, n_list_node_t *node);
     (char *)(&(((parent_type*)0))->parameter_name)
 
 #define n_offset_to_parent(node, parameter_name, parent_type) \
-    (parent_type *)((char *)(node) - n_offset_in_parent(parameter_name, parent_type))
+    (parent_type *)((char *)(void *)(node) - n_offset_in_parent(parameter_name, parent_type))
 
-//#define n_list_entity(node, parameter_name, parent_type) \
-//    (parent_type *)((node) ? (parent_type *)((char *)(node) - (char *)(&(((parent_type*)0))->parameter_name)) : 0)
 #define n_list_entity(node, parameter_name, parent_type) \
     (parent_type *)((node) ? n_offset_to_parent(node, parameter_name, parent_type) : (void *)0)
 

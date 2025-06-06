@@ -272,7 +272,7 @@ void pkt_buf_test() {
     uint16_t read_tmp[1000];
     pkt_buf_reset_acc(buf);
     plat_memset(read_tmp, 0, sizeof(read_tmp));
-    pkt_buf_read(buf, read_tmp, pkt_buf_total(buf));
+    pkt_buf_read(buf, (uint8_t *)read_tmp, pkt_buf_total(buf));
 
     if (plat_memcmp(read_tmp, tmp, pkt_buf_total(buf)) != 0) {
         debug(DEBUG_ERROR, "not equal");
@@ -281,7 +281,7 @@ void pkt_buf_test() {
 
     plat_memset(read_tmp, 0, sizeof(read_tmp));
     pkt_buf_seek(buf, 18 * 2);
-    pkt_buf_read(buf, read_tmp, 56);
+    pkt_buf_read(buf, (uint8_t *)read_tmp, 56);
     if (plat_memcmp(tmp + 18, read_tmp, 56) != 0) {
         debug(DEBUG_ERROR, "not equal");
         return;
@@ -289,7 +289,7 @@ void pkt_buf_test() {
 
     plat_memset(read_tmp, 0, sizeof(read_tmp));
     pkt_buf_seek(buf, 85 * 2);
-    pkt_buf_read(buf, read_tmp, 256);
+    pkt_buf_read(buf, (uint8_t *)read_tmp, 256);
     if (plat_memcmp(tmp + 85, read_tmp, 256) != 0) {
         debug(DEBUG_ERROR, "not equal");
         return;
@@ -302,7 +302,7 @@ void pkt_buf_test() {
 
     plat_memset(read_tmp, 0, sizeof(read_tmp));
     pkt_buf_seek(dest, 600);
-    pkt_buf_read(dest, read_tmp, 122);
+    pkt_buf_read(dest, (uint8_t *)read_tmp, 122);
     if (plat_memcmp(tmp + 100, read_tmp, 122) != 0) {
         debug(DEBUG_ERROR, "not equal");
         return;
@@ -312,7 +312,7 @@ void pkt_buf_test() {
     pkt_buf_fill(dest, 0XFF, pkt_buf_total(dest));
     plat_memset(read_tmp, 0, sizeof(read_tmp));
     pkt_buf_seek(dest, 0);
-    pkt_buf_read(dest, read_tmp, pkt_buf_total(dest));
+    pkt_buf_read(dest, (uint8_t *)read_tmp, pkt_buf_total(dest));
 
     char *ptr = (char *)read_tmp;
     for (int i = 0; i < pkt_buf_total(dest); ++i) {
