@@ -193,7 +193,7 @@ int sys_time_goes (net_time_t * pre) {
     net_time_t curr = GetTickCount();
 
     // 记录过去了多少毫秒
-   int diff_ms = curr - *pre;
+    int diff_ms = curr - *pre;
 
     // 记录下这次调用的时间
     *pre  = curr;
@@ -265,13 +265,13 @@ void sys_mutex_unlock(sys_mutex_t locker) {
 
 sys_thread_t sys_thread_create(void (*entry)(void * arg), void* arg) {
     return CreateThread(
-        NULL,                           // SD
-        0,                              // initial stack size
-        (LPTHREAD_START_ROUTINE)entry,  // thread function
-        arg,                            // thread argument
-        0,                              // 创建后立即运行
-        NULL                            // thread identifier
-        );
+            NULL,                           // SD
+            0,                              // initial stack size
+            (LPTHREAD_START_ROUTINE)entry,  // thread function
+            arg,                            // thread argument
+            0,                              // 创建后立即运行
+            NULL                            // thread identifier
+    );
 }
 
 /**
@@ -594,9 +594,9 @@ int pcap_show_list(void) {
                 name = item->name;
             }
             printf("%d: IP:%s name: %s, \n",
-                count++,
-                name ? name : "unknown",
-                inet_ntop(AF_INET, &ip_addr->sin_addr, str, sizeof(str))
+                   count++,
+                   name ? name : "unknown",
+                   inet_ntop(AF_INET, &ip_addr->sin_addr, str, sizeof(str))
             );
             break;
         }
@@ -685,9 +685,9 @@ pcap_t * pcap_device_open(const char* ip, const uint8_t* mac_addr) {
     char filter_exp[256];
     struct bpf_program fp;
     sprintf(filter_exp,
-        "(ether dst %02x:%02x:%02x:%02x:%02x:%02x or ether broadcast) and (not ether src %02x:%02x:%02x:%02x:%02x:%02x)",
-        mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5],
-        mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
+            "(ether dst %02x:%02x:%02x:%02x:%02x:%02x or ether broadcast) and (not ether src %02x:%02x:%02x:%02x:%02x:%02x)",
+            mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5],
+            mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
     if (pcap_compile(pcap, &fp, filter_exp, 0, net) == -1) {
         printf("pcap_open: couldn't parse filter %s: %s\n", filter_exp, pcap_geterr(pcap));
         return (pcap_t*)0;

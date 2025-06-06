@@ -26,7 +26,7 @@ include_directories(
 file(GLOB_RECURSE SOURCE_LIST "src/*.c" "src/*.h")
 
 # 将源文件列表加入到工程中
-add_executable(${PROJECT_NAME} ${SOURCE_LIST})
+add_executable(${PROJECT_NAME} ${SOURCE_LIST} src/net/net/netif.h src/net/net/ipaddr.h)
 
 # 与一些库进行编译链接，生成最终的程序
 # 针对网络的平台配置
