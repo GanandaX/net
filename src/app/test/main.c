@@ -20,6 +20,8 @@
 #include "n_list.h"
 #include "m_block.h"
 #include "pkt_buf.h"
+#include "netif.h"
+#include "loop.h"
 
 sys_sem_t sem;
 int count;
@@ -267,12 +269,12 @@ void pkt_buf_test() {
         tmp[i] = i;
     }
     pkt_buf_reset_acc(buf);
-    pkt_buf_write(buf, (uint8_t *)tmp, pkt_buf_total(buf));
+    pkt_buf_write(buf, (uint8_t *) tmp, pkt_buf_total(buf));
 
     uint16_t read_tmp[1000];
     pkt_buf_reset_acc(buf);
     plat_memset(read_tmp, 0, sizeof(read_tmp));
-    pkt_buf_read(buf, (uint8_t *)read_tmp, pkt_buf_total(buf));
+    pkt_buf_read(buf, (uint8_t *) read_tmp, pkt_buf_total(buf));
 
     if (plat_memcmp(read_tmp, tmp, pkt_buf_total(buf)) != 0) {
         debug(DEBUG_ERROR, "not equal");
@@ -281,7 +283,7 @@ void pkt_buf_test() {
 
     plat_memset(read_tmp, 0, sizeof(read_tmp));
     pkt_buf_seek(buf, 18 * 2);
-    pkt_buf_read(buf, (uint8_t *)read_tmp, 56);
+    pkt_buf_read(buf, (uint8_t *) read_tmp, 56);
     if (plat_memcmp(tmp + 18, read_tmp, 56) != 0) {
         debug(DEBUG_ERROR, "not equal");
         return;
@@ -289,7 +291,7 @@ void pkt_buf_test() {
 
     plat_memset(read_tmp, 0, sizeof(read_tmp));
     pkt_buf_seek(buf, 85 * 2);
-    pkt_buf_read(buf, (uint8_t *)read_tmp, 256);
+    pkt_buf_read(buf, (uint8_t *) read_tmp, 256);
     if (plat_memcmp(tmp + 85, read_tmp, 256) != 0) {
         debug(DEBUG_ERROR, "not equal");
         return;
@@ -302,7 +304,7 @@ void pkt_buf_test() {
 
     plat_memset(read_tmp, 0, sizeof(read_tmp));
     pkt_buf_seek(dest, 600);
-    pkt_buf_read(dest, (uint8_t *)read_tmp, 122);
+    pkt_buf_read(dest, (uint8_t *) read_tmp, 122);
     if (plat_memcmp(tmp + 100, read_tmp, 122) != 0) {
         debug(DEBUG_ERROR, "not equal");
         return;
@@ -312,11 +314,11 @@ void pkt_buf_test() {
     pkt_buf_fill(dest, 0XFF, pkt_buf_total(dest));
     plat_memset(read_tmp, 0, sizeof(read_tmp));
     pkt_buf_seek(dest, 0);
-    pkt_buf_read(dest, (uint8_t *)read_tmp, pkt_buf_total(dest));
+    pkt_buf_read(dest, (uint8_t *) read_tmp, pkt_buf_total(dest));
 
-    char *ptr = (char *)read_tmp;
+    char *ptr = (char *) read_tmp;
     for (int i = 0; i < pkt_buf_total(dest); ++i) {
-        if (*ptr++ != (char)0XFF) {
+        if (*ptr++ != (char) 0XFF) {
             debug(DEBUG_ERROR, "not equal");
         }
     }
@@ -329,7 +331,11 @@ void pkt_buf_test() {
 void base_test() {
     // n_list_test();
     // m_block_test();
-    pkt_buf_test();
+//    pkt_buf_test();
+
+//    netif_t *netif = netif_open("pcap");
+
+//    loop_init();
 }
 
 int main(void) {
@@ -358,9 +364,11 @@ int main(void) {
     net_start();
     net_dev_init();
 
-    base_test();
+//    base_test();
 
     while (1) {
         sys_sleep(10);
     }
+    printf("json");
+    return 1;
 }

@@ -5,7 +5,9 @@
 #ifndef NET_DEBUG_H
 #define NET_DEBUG_H
 
+#include <stdint.h>
 #include "net_config.h"
+#include "ipaddr.h"
 
 #define DEBUG_STYLE_INFO "\033[0m"
 #define DEBUG_STYLE_WARNING "\033[33m"
@@ -18,7 +20,11 @@
 #define DEBUG_WARNING   2
 #define DEBUG_ERROR     1
 
+
 void debug_print(unsigned char input_level, char *filePath, const char *func, int line, const char *format, ...);
+void dbg_dump_hwaddr(const char *msg, const uint8_t *hwaddr, int len);
+void dbg_dump_ip(const char *msg, ipaddr_t *ipaddr);
+
 
 #define debug(level, format, ...) debug_print(level, __FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)
 #define debug_info(level, format, ...) debug_print(level, __FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)

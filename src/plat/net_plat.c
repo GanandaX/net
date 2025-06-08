@@ -5,8 +5,8 @@
 #include "debug.h"
 
 net_status_t net_plat_init() {
-    debug(DEBUG_PLAT, "net_plat is initializing...");
-    debug(DEBUG_PLAT, "init done.");
+    debug(DEBUG_PLAT, "net plat is initializing...");
+    debug(DEBUG_PLAT, "net plat init done.");
 
     return NET_OK;
 }

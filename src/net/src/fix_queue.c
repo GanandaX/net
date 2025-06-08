@@ -86,6 +86,7 @@ void *fix_queue_read_out(fix_queue_t *queue, int tmo) {
     queue->count--;
     n_locker_unlock(&queue->locker);
 
+    sys_sem_notify(queue->write_sem);
     return msg;
 }
 

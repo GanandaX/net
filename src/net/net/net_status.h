@@ -15,6 +15,7 @@ typedef enum _net_status_t {
     NET_ERROR_SIZE = -5,
     NET_ERROR_NO_SOURCE = -6,
     NET_ERROR_PARAM = -7,
+    NET_ERROR_STATE = -8,
 } net_status_t;
 
 

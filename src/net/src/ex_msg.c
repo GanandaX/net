@@ -31,6 +31,8 @@ net_status_t ex_msg_init() {
         return status;
     }
 
+    debug_info(DEBUG_MSG, "exmsg init done.");
+
     return NET_OK;
 }
 
@@ -54,7 +56,7 @@ net_status_t ex_msg_start() {
     return NET_OK;
 }
 
-net_status_t exmsg_netif_in() {
+net_status_t exmsg_netif_in(netif_t *netif) {
     exmsg_t *msg = m_block_alloc(&msg_block, -1);
 
     if (!msg) {

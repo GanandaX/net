@@ -7,7 +7,7 @@
 
 #include "net_status.h"
 #include "n_list.h"
-
+#include "netif.h"
 
 typedef struct _exmsg_t {
     enum {
@@ -21,6 +21,6 @@ net_status_t ex_msg_init();
 
 net_status_t ex_msg_start();
 
-net_status_t exmsg_netif_in();
+net_status_t exmsg_netif_in(netif_t *netif);
 
 #endif //NET_EX_MSG_H

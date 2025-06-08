@@ -6,7 +6,7 @@
 #define NET_IPADDR_H
 
 #include <stdint.h>
-
+#include "net_status.h"
 #define IPV4_ADDR_SIZE 4
 typedef struct _ipaddr_t {
     enum {
@@ -18,5 +18,12 @@ typedef struct _ipaddr_t {
         uint8_t a_addr[IPV4_ADDR_SIZE];
     };
 }ipaddr_t;
+
+void ipaddr_set_any(ipaddr_t *any);
+
+net_status_t ipaddr_from_str(ipaddr_t *dest,const char *str);
+
+void ipaddr_copy(ipaddr_t *dest, const ipaddr_t *src);
+ipaddr_t  * ipaddr_get_empty();
 
 #endif //NET_IPADDR_H

@@ -8,13 +8,15 @@
 #include "pkt_buf.h"
 #include "debug.h"
 #include "netif.h"
-
+#include "loop.h"
 net_status_t net_init(void) {
     debug(DEBUG_INIT, "init net");
     net_plat_init();
     ex_msg_init();
     pkt_buf_init();
     netif_init();
+    loop_init();
+
     return NET_OK;
 }
 
