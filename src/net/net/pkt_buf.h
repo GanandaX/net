@@ -54,6 +54,11 @@ static inline pkt_blk_t *pkt_buf_first_blk(pkt_buf_t *buf) {
     return n_list_entity(n_list_first(&buf->list), node, pkt_blk_t);
 }
 
+static inline uint8_t *pkt_buf_data(pkt_buf_t *buf) {
+    pkt_blk_t *blk = pkt_buf_first_blk(buf);
+    return blk ? blk->data : (uint8_t *) 0;
+}
+
 static inline pkt_blk_t *pkt_buf_last_blk(pkt_buf_t *buf) {
     return n_list_entity(n_list_last(&buf->list), node, pkt_blk_t);
 }
@@ -67,7 +72,7 @@ void pkt_buf_free(pkt_buf_t *buf);
  * @param add_mod 数据在数据块是否是连续的
  * @return
  */
-net_status_t pkt_add_header(pkt_buf_t *buf, int size, add_header_mod add_mod);
+net_status_t pkt_buf_add_header(pkt_buf_t *buf, int size, add_header_mod add_mod);
 
 net_status_t pkt_remove_header(pkt_buf_t *buf, int size);
 

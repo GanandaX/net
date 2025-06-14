@@ -36,13 +36,45 @@ net_status_t ex_msg_init() {
     return NET_OK;
 }
 
+static net_status_t do_netif_in(exmsg_t *msg) {
+    netif_t *netif = msg->netif.netif;
+
+    pkt_buf_t *buf;
+    while (buf = netif_get_in(netif, -1)) {
+        debug(DEBUG_INFO, "recv a packet");
+
+        if (netif->link_layer) {
+            net_status_t status = netif->link_layer->in(netif, buf);
+            if (status < NET_OK) {
+                pkt_buf_free(buf);
+                debug(DEBUG_WARNING, "netif in failed, status= %d", status);
+            }
+        } else {
+            pkt_buf_free(buf);
+        }
+    }
+}
+
 static void work_thread(void *arg) {
     debug_info(DEBUG_MSG, "ex_msg is running ...");
 
     while (1) {
         exmsg_t *msg = (exmsg_t *) fix_queue_read_out(&msg_queue, 0);
-        debug_info(DEBUG_MSG, "recving a msg type: %d, id: %d", msg->type, msg->id);
+
+        debug(DEBUG_INFO, "recv a msg %p: %d", msg, msg->type);
+
+        switch (msg->type) {
+            case NET_EXMSG_NETIF_IN:
+                do_netif_in(msg);
+                debug(DEBUG_INFO, "");
+                break;
+            default:
+                break;
+        }
+        debug(DEBUG_INFO, "");
+
         m_block_free(&msg_block, msg);
+        debug(DEBUG_INFO, "");
     }
 }
 
@@ -64,9 +96,8 @@ net_status_t exmsg_netif_in(netif_t *netif) {
         return NET_ERROR_MEM;
     }
 
-    static int id = 0;
     msg->type = NET_EXMSG_NETIF_IN;
-    msg->id = id++;
+    msg->netif.netif = netif;
 
     const net_status_t status = fix_queue_write_in(&msg_queue, msg, -1);
     if (status != NET_OK) {

@@ -22,84 +22,43 @@
 #include "pkt_buf.h"
 #include "netif.h"
 #include "loop.h"
+#include "ether.h"
+#include "tools.h"
 
-sys_sem_t sem;
-int count;
-sys_mutex_t mutex;
-
-unsigned char buffer[100];
-sys_sem_t read_sem;
-sys_sem_t write_sem;
-unsigned char read_index;
-unsigned char write_index;
-unsigned char total_count;
-
-void thread1_entry(void *arg) {
-    // 读线程
-    while (1) {
-        sys_sem_wait(read_sem, 0);
-
-        unsigned char data = buffer[read_index++];
-        plat_printf("read thread: %d\n", data);
-
-        sys_mutex_lock(mutex);
-        total_count--;
-        sys_mutex_unlock(mutex);
-
-        sys_sem_notify(write_sem);
-        sys_sleep(200);
-    }
-
-    /* for (size_t i = 0; i < 100; i++)
-     {
-         sys_mutex_lock(mutex);
-         count++;
-         plat_printf("thread 1: %d\n", count);
-         sys_mutex_unlock(mutex);
-     }*/
-
-    /*  while(1) {
-         plat_printf("thread1: %s\n", (char*)arg);
-         sys_sem_notify(sem);
-         sys_sleep(1000);
-     } */
-}
-
-void thread2_entry(void *arg) {
-    unsigned char number = 1;
-    // 写线程
-    while (1) {
-        sys_sem_wait(write_sem, 0);
-
-        buffer[write_index++] = number++;
-        plat_printf("write thread: %d\n", number - 1);
-
-        sys_mutex_lock(mutex);
-        total_count++;
-        sys_mutex_unlock(mutex);
-
-        sys_sem_notify(read_sem);
-        sys_sleep(100);
-    }
-
-    /*sys_sem_wait(mutex, 0);
-
-    for (size_t i = 0; i < 100; i++)
-    {
-        sys_mutex_lock(mutex);
-        count--;
-        plat_printf("thread 2: %d\n", count);
-        sys_mutex_unlock(mutex);
-    }*/
-    /*  while(1) {
-         sys_sem_wait(sem, 0);
-         plat_printf("thread2: %s\n", (char*)arg);
-     } */
-}
+pcap_data_t net_dev_0_data = {
+        .ip = netdev0_phy_ip,
+        .hwaddr = netdev0_hwaddr
+};
 
 net_status_t net_dev_init() {
-    netif_pcap_open();
 
+    netif_t *netif = netif_open("netif_0", &net_dev_ops, &net_dev_0_data);
+    if (!netif) {
+        debug(DEBUG_ERROR, "open netif_0 error");
+        return NET_ERROR_NO_SOURCE;
+    }
+
+    ipaddr_t ip, mask, gateway;
+
+    if (ipaddr_from_str(&ip, netdev0_ip) < NET_OK) {
+        return NET_ERROR_PARAM;
+    }
+    if (ipaddr_from_str(&mask, netdev0_mask) < NET_OK) {
+        return NET_ERROR_PARAM;
+    }
+    if (ipaddr_from_str(&gateway, netdev0_gw) < NET_OK) {
+        return NET_ERROR_PARAM;
+    }
+
+    netif_set_addr(netif, &ip, &mask, &gateway);
+
+    netif_set_active(netif);
+
+    pkt_buf_t *buf = pkt_buf_alloc(32);
+    pkt_buf_fill(buf, 0X53, 32);
+    netif_out(netif, (ipaddr_t *) 0, buf);
+
+    debug(DEBUG_INFO, "init netif_0 done.");
     return NET_OK;
 }
 
@@ -208,7 +167,7 @@ void pkt_buf_test() {
 
     buf = pkt_buf_alloc(2000);
     for (int i = 0; i < 16; ++i) {
-        pkt_add_header(buf, 33, CONTINUE);
+        pkt_buf_add_header(buf, 33, CONTINUE);
     }
 
     for (int i = 0; i < 16; ++i) {
@@ -216,7 +175,7 @@ void pkt_buf_test() {
     }
 
     for (int i = 0; i < 16; ++i) {
-        pkt_add_header(buf, 33, DISCONTINUE);
+        pkt_buf_add_header(buf, 33, DISCONTINUE);
     }
 
     for (int i = 0; i < 16; ++i) {
@@ -328,13 +287,15 @@ void pkt_buf_test() {
 }
 
 
-void base_test() {
+void basic_test() {
     // n_list_test();
     // m_block_test();
 //    pkt_buf_test();
 
 //    netif_t *netif = netif_open("pcap");
 
+    uint32_t v1 = x_ntohl(0X12345678);
+    uint16_t v2 = x_ntohs(0X1234);
 //    loop_init();
 }
 
@@ -359,12 +320,14 @@ int main(void) {
 
     //    debug_assert(3 == 0, "3不等于0");
 
-
+    int size = sizeof(ether_hdr_t);
+    int size_1 = sizeof(ether_pkt_t);
     net_init();
-    net_start();
-    net_dev_init();
 
-//    base_test();
+    net_dev_init();
+    net_start();
+
+    basic_test();
 
     while (1) {
         sys_sleep(10);

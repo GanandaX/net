@@ -9,12 +9,21 @@
 #include "n_list.h"
 #include "netif.h"
 
+typedef struct _msg_netif_t {
+    netif_t *netif;
+}msg_netif_t;
+
 typedef struct _exmsg_t {
+
+    n_list_node_t node;
     enum {
-        NET_EXMSG_NETIF_IN
+        NET_EXMSG_NETIF_IN,
     } type;
 
-    int id;
+    union {
+        msg_netif_t netif;
+    };
+
 } exmsg_t;
 
 net_status_t ex_msg_init();

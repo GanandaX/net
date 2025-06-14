@@ -5,7 +5,6 @@
 #include "ex_msg.h"
 
 static net_status_t loop_open(netif_t *netif, void *data) {
-
     netif->type = NETIF_TYPE_LOOP;
     return NET_OK;
 }
@@ -16,7 +15,6 @@ static void loop_close(netif_t *netif) {
 
 
 static net_status_t loop_xmit(netif_t *netif) {
-
     pkt_buf_t *pkt_buf = netif_get_out(netif, -1);
     if (pkt_buf) {
         net_status_t status = netif_put_in(netif, pkt_buf, -1);
@@ -56,9 +54,6 @@ net_status_t loop_init(void) {
     netif_set_addr(netif, &ip, &mask, (ipaddr_t *) 0);
 
     netif_set_active(netif);
-
-    pkt_buf_t  *buf = pkt_buf_alloc(100);
-    netif_out(netif, (ipaddr_t *)0, buf);
 
     debug(DEBUG_INFO, "init done.");
     return NET_OK;

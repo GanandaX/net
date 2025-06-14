@@ -9,6 +9,8 @@
 #include "debug.h"
 #include "netif.h"
 #include "loop.h"
+#include "ether.h"
+
 net_status_t net_init(void) {
     debug(DEBUG_INIT, "init net");
     net_plat_init();
@@ -16,6 +18,7 @@ net_status_t net_init(void) {
     pkt_buf_init();
     netif_init();
     loop_init();
+    ether_init();
 
     return NET_OK;
 }

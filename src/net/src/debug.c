@@ -41,7 +41,7 @@ void debug_print(const unsigned char input_level, char *filePath, const char *fu
 
 void dbg_dump_hwaddr(const char *msg, const uint8_t *hwaddr, int len) {
     if (msg) {
-        plat_printf("%s", msg);
+        plat_printf("%15s", msg);
     }
 
     if (len) {
@@ -49,13 +49,13 @@ void dbg_dump_hwaddr(const char *msg, const uint8_t *hwaddr, int len) {
             plat_printf("%02x-", hwaddr[i]);
         }
     } else {
-        plat_printf("none");
+        plat_printf("%-18s", "none");
     }
 }
 
 void dbg_dump_ip(const char *msg, ipaddr_t *ipaddr) {
     if (msg) {
-        plat_printf("%s", msg);
+        plat_printf("%15s", msg);
     }
 
     if (ipaddr) {

@@ -24,7 +24,7 @@ typedef enum _netif_type_t {
     NETIF_TYPE_ETHER,
     NETIF_TYPE_LOOP,
 
-    NET_TYPE_SIZE,
+    NETIF_TYPE_SIZE,
 } netif_type_t;
 
 struct _netif_t;
@@ -35,6 +35,16 @@ typedef struct _netif_ops_t {
 
     net_status_t (*xmit)(struct _netif_t *netif);
 } netif_ops_t;
+
+
+typedef struct _link_layer_t {
+    netif_type_t type;
+
+    net_status_t (*open)(struct _netif_t *netif);
+    void (*close)(struct _netif_t *netif);
+    net_status_t (*in)(struct _netif_t *netif, pkt_buf_t *buf);
+    net_status_t (*out)(struct _netif_t *netif,ipaddr_t *dest, pkt_buf_t *buf);
+}link_layer_t;
 
 typedef struct _netif_t {
     char name[NETIF_NAME_SIZE];
@@ -56,6 +66,7 @@ typedef struct _netif_t {
 
     netif_ops_t *ops;
     void *ops_data;
+    const link_layer_t *link_layer;
     n_list_node_t node;
     fix_queue_t in_q;
     void *in_q_buf[NETIF_INQ_SIZE];
@@ -89,6 +100,8 @@ net_status_t netif_put_out(netif_t *netif, pkt_buf_t *buf, int tmo);
 
 pkt_buf_t *netif_get_out(netif_t *netif, int tmo);
 
-
 net_status_t netif_out(netif_t *netif, ipaddr_t *ipaddr, pkt_buf_t *buf);
+
+net_status_t netif_register_layer(const link_layer_t *link_layer);
+
 #endif //NET_NETIF_H

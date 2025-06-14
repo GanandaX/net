@@ -11,12 +11,6 @@ static m_block_t block_list;
 static pkt_buf_t pkt_buf_buffer[PKT_BUF_CNT];
 static m_block_t pkt_buf_list;
 
-
-static uint8_t *pkt_buf_data(pkt_buf_t *buf) {
-    pkt_blk_t *blk = pkt_buf_first_blk(buf);
-    return blk ? blk->data : (uint8_t *) 0;
-}
-
 static int pkt_current_blk_remain_size(pkt_buf_t *buf) {
     if (!buf->cur_blk) {
         return 0;
@@ -24,7 +18,7 @@ static int pkt_current_blk_remain_size(pkt_buf_t *buf) {
     return (int) (buf->cur_blk->data + buf->cur_blk->size - buf->blk_offset);
 }
 
-static int total_blk_ramin_ralte_to_pos(pkt_buf_t *buf) {
+static int total_blk_remain_relate_to_pos(pkt_buf_t *buf) {
     return buf->total_size - buf->pos;
 }
 
@@ -231,7 +225,7 @@ void pkt_buf_free(pkt_buf_t *buf) {
 }
 
 
-net_status_t pkt_add_header(pkt_buf_t *buf, int size, add_header_mod add_mod) {
+net_status_t pkt_buf_add_header(pkt_buf_t *buf, int size, add_header_mod add_mod) {
     debug_assert(buf->ref != 0, "buf->ref == 0");
 
     pkt_blk_t *block = pkt_buf_first_blk(buf);
@@ -451,7 +445,7 @@ net_status_t pkt_buf_write(pkt_buf_t *buf, uint8_t *data, int size) {
         return NET_ERROR_PARAM;
     }
 
-    int remain_size = total_blk_ramin_ralte_to_pos(buf);
+    int remain_size = total_blk_remain_relate_to_pos(buf);
     if (remain_size < size) {
         debug(DEBUG_ERROR, "size error: %d < %d", remain_size, size);
         return NET_ERROR_SIZE;
@@ -477,7 +471,7 @@ net_status_t pkt_buf_fill(pkt_buf_t *buf, uint8_t val, int size) {
         return NET_ERROR_PARAM;
     }
 
-    int remain_size = total_blk_ramin_ralte_to_pos(buf);
+    int remain_size = total_blk_remain_relate_to_pos(buf);
     if (remain_size < size) {
         debug(DEBUG_ERROR, "size error: %d < %d", remain_size, size);
         return NET_ERROR_SIZE;
@@ -502,7 +496,7 @@ net_status_t pkt_buf_read(pkt_buf_t *buf, uint8_t *data, int size) {
         return NET_ERROR_PARAM;
     }
 
-    int remain_size = total_blk_ramin_ralte_to_pos(buf);
+    int remain_size = total_blk_remain_relate_to_pos(buf);
     if (remain_size < size) {
         debug(DEBUG_ERROR, "size error: %d < %d", remain_size, size);
         return NET_ERROR_SIZE;
@@ -554,7 +548,7 @@ net_status_t pkt_buf_seek(pkt_buf_t *buf, int offset) {
 net_status_t pkt_buf_copy(pkt_buf_t *dest, pkt_buf_t *src, int size) {
     debug_assert(dest->ref != 0, "dest->ref == 0");
     debug_assert(src->ref != 0, "src->ref == 0");
-    if (total_blk_ramin_ralte_to_pos(dest) < size || total_blk_ramin_ralte_to_pos(src) < size) {
+    if (total_blk_remain_relate_to_pos(dest) < size || total_blk_remain_relate_to_pos(src) < size) {
         return NET_ERROR_SIZE;
     }
 

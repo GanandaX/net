@@ -5,7 +5,13 @@
 #ifndef NET_NETIF_PCAP_H
 #define NET_NETIF_PCAP_H
 #include "net_status.h"
+#include "stdint.h"
+#include "netif.h"
 
-net_status_t netif_pcap_open(void);
+typedef struct _pcap_data_t {
+    const char *ip;
+    const uint8_t *hwaddr;
+}pcap_data_t;
 
+extern const netif_ops_t net_dev_ops;
 #endif //NET_NETIF_PCAP_H
