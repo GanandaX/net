@@ -10,7 +10,6 @@
 #include "protocol.h"
 
 #if DEBUG_DISP_ENABLED(DEBUG_ETHER)
-
 static void display_ether_pkt(char *title, ether_pkt_t *pkt, int total_size) {
     ether_hdr_t *hdr = &pkt->hdr;
 
@@ -34,10 +33,8 @@ static void display_ether_pkt(char *title, ether_pkt_t *pkt, int total_size) {
             break;
     }
 }
-
-
 #else
-
+#define display_ether_pkt(title, pkt, total_size)
 #endif
 
 net_status_t ether_open(struct _netif_t *netif) {

@@ -18,6 +18,7 @@ typedef enum _net_status_t {
     NET_ERROR_STATE = -8,
     NET_ERROR_IO = -9,
     NET_ERROR_EXIST = -10,
+    NET_ERROR_NOT_EXIST = -11,
 } net_status_t;
 
 

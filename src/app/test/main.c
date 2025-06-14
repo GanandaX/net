@@ -24,6 +24,7 @@
 #include "loop.h"
 #include "ether.h"
 #include "tools.h"
+#include "timer.h"
 
 pcap_data_t net_dev_0_data = {
         .ip = netdev0_phy_ip,
@@ -286,6 +287,37 @@ void pkt_buf_test() {
     pkt_buf_free(buf);
 }
 
+void timer0_proc(net_timer_t *timer, void *arg) {
+    static uint8_t counter = 1;
+    plat_printf("this is %s: %d\n", timer->name, counter++);
+}
+
+void timer1_proc(net_timer_t *timer, void *arg) {
+    static uint8_t counter = 1;
+    plat_printf("this is %s: %d\n", timer->name, counter++);
+}
+
+void timer2_proc(net_timer_t *timer, void *arg) {
+    static uint8_t counter = 1;
+    plat_printf("this is %s: %d\n", timer->name, counter++);
+}
+
+void timer3_proc(net_timer_t *timer, void *arg) {
+    static uint8_t counter = 1;
+    plat_printf("this is %s: %d\n", timer->name, counter++);
+}
+
+
+void timer_test() {
+    static net_timer_t t0, t1, t2, t3;
+
+    net_timer_add(&t0, "t0", timer0_proc, (void *)0, 200, !NET_TIMER_RELOAD);
+    net_timer_add(&t1, "t1", timer1_proc, (void *)0, 1000, NET_TIMER_RELOAD);
+    net_timer_add(&t2, "t2", timer2_proc, (void *)0, 1000, NET_TIMER_RELOAD);
+    net_timer_add(&t3, "t3", timer3_proc, (void *)0, 4000, NET_TIMER_RELOAD);
+
+    net_timer_remove(&t0);
+}
 
 void basic_test() {
     // n_list_test();
@@ -297,6 +329,8 @@ void basic_test() {
     uint32_t v1 = x_ntohl(0X12345678);
     uint16_t v2 = x_ntohs(0X1234);
 //    loop_init();
+
+    timer_test();
 }
 
 int main(void) {
@@ -325,9 +359,10 @@ int main(void) {
     net_init();
 
     net_dev_init();
+    basic_test();
+
     net_start();
 
-    basic_test();
 
     while (1) {
         sys_sleep(10);

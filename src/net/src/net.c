@@ -10,6 +10,7 @@
 #include "netif.h"
 #include "loop.h"
 #include "ether.h"
+#include "timer.h"
 
 net_status_t net_init(void) {
     debug(DEBUG_INIT, "init net");
@@ -17,6 +18,7 @@ net_status_t net_init(void) {
     ex_msg_init();
     pkt_buf_init();
     netif_init();
+    net_timer_init();
     loop_init();
     ether_init();
 

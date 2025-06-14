@@ -5,6 +5,7 @@
 #ifndef NET_CONFIG_H
 #define NET_CONFIG_H
 
+#define DEBUG_TIMER DEBUG_INFO
 #define DEBUG_ETHER DEBUG_INFO
 #define DEBUG_NETIF DEBUG_INFO
 #define DEBUG_INIT DEBUG_INFO
@@ -29,5 +30,7 @@
 #define NETIF_OUTQ_SIZE       50
 
 #define NETIF_DEV_CNT       10
+
+#define TIMER_NAME_SIZE       32
 
 #endif //NET_CONFIG_H

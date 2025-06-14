@@ -7,6 +7,7 @@
 #include "sys_plat.h"
 #include "fix_queue.h"
 #include "m_block.h"
+#include "timer.h"
 
 // msg_block 存放具体信息, msg_queue表示消息队列
 static void *msg_table[EXMSG_MSG_CNT];
@@ -58,23 +59,28 @@ static net_status_t do_netif_in(exmsg_t *msg) {
 static void work_thread(void *arg) {
     debug_info(DEBUG_MSG, "ex_msg is running ...");
 
+    net_time_t time;
+    sys_time_curr(&time);
+
     while (1) {
-        exmsg_t *msg = (exmsg_t *) fix_queue_read_out(&msg_queue, 0);
+        int first_tmo = net_timer_first_tmo();
+        exmsg_t *msg = (exmsg_t *) fix_queue_read_out(&msg_queue, first_tmo);
 
-        debug(DEBUG_INFO, "recv a msg %p: %d", msg, msg->type);
+        if (msg) {
+            debug(DEBUG_INFO, "recv a msg %p: %d", msg, msg->type);
+            switch (msg->type) {
+                case NET_EXMSG_NETIF_IN:
+                    do_netif_in(msg);
+                    break;
+                default:
+                    break;
+            }
 
-        switch (msg->type) {
-            case NET_EXMSG_NETIF_IN:
-                do_netif_in(msg);
-                debug(DEBUG_INFO, "");
-                break;
-            default:
-                break;
+            m_block_free(&msg_block, msg);
         }
-        debug(DEBUG_INFO, "");
 
-        m_block_free(&msg_block, msg);
-        debug(DEBUG_INFO, "");
+        uint32_t interval = sys_time_goes(&time);
+        net_timer_check_tmo(interval);
     }
 }
 

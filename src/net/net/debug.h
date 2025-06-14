@@ -14,7 +14,8 @@
 #define DEBUG_STYLE_ERROR "\033[31m"
 #define DEBUG_STYLE_RESET "\033[0m"
 
-#define DEBUG_LOGGER_LEVEL DEBUG_INFO
+#define DEBUG_LOGGER_LEVEL DEBUG_WARNING
+//#define DEBUG_LOGGER_LEVEL DEBUG_INFO
 
 #define DEBUG_INFO      3
 #define DEBUG_WARNING   2
@@ -37,6 +38,6 @@ void dbg_dump_ip(const char *msg, ipaddr_t *ipaddr);
         while(1);                     \
     }                                 \
 
-#define DEBUG_DISP_ENABLED(module) (module >= DEBUG_INFO)
+#define DEBUG_DISP_ENABLED(module) (module <= DEBUG_WARNING)
 
 #endif //NET_DEBUG_H
