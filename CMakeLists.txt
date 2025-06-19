@@ -29,7 +29,7 @@ file(GLOB_RECURSE SOURCE_LIST "src/*.c" "src/*.h")
 
 # 将源文件列表加入到工程中
 #add_executable(${PROJECT_NAME} src/app/test/main.c)
-add_executable(${PROJECT_NAME} ${SOURCE_LIST} src/net/src/ipaddr.c src/net/net/loop.h src/net/src/loop.c src/net/net/ether.h src/net/src/ether.c src/net/net/tools.h src/net/net/protocol.h src/net/net/timer.h src/net/src/timer.c)
+add_executable(${PROJECT_NAME} ${SOURCE_LIST} src/net/src/ipaddr.c src/net/net/loop.h src/net/src/loop.c src/net/net/ether.h src/net/src/ether.c src/net/net/tools.h src/net/net/protocol.h src/net/net/timer.h src/net/src/timer.c src/net/net/arp.h src/net/src/arp.c)
 
 # 与一些库进行编译链接，生成最终的程序
 # 针对网络的平台配置

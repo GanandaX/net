@@ -30,8 +30,10 @@ typedef struct _ether_pkt_t {
 
 net_status_t ether_init(void);
 
-
 const uint8_t *ether_broadcast_addr(void);
-net_status_t ether_raw_out(netif_t *netif, protocol_t protocol, const uint8_t *dest, pkt_buf_t *buf);
+
+net_status_t ether_raw_out(netif_t *netif, protocol_t protocol, const uint8_t *dest_hwaddr, pkt_buf_t *buf);
+
+uint8_t ipaddr_is_equal(const ipaddr_t *src_ipaddr, const ipaddr_t *dest_ipaddr);
 
 #endif //NET_ETHER_H

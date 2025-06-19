@@ -103,6 +103,10 @@ net_status_t netif_register_layer(const link_layer_t *link_layer) {
     return NET_OK;
 }
 
+uint8_t hw_addr_is_equal(uint8_t *src_hwaddr, uint8_t *dest_hwaddr) {
+    return !plat_memcmp(src_hwaddr, dest_hwaddr, NETIF_HWADDR_SIZE);
+}
+
 static const link_layer_t *netif_get_layer(netif_type_t type) {
     if (type < 0 || type >= NETIF_TYPE_SIZE) {
         debug(DEBUG_ERROR, "type error");
@@ -332,8 +336,10 @@ pkt_buf_t *netif_get_out(netif_t *netif, int tmo) {
 }
 
 net_status_t netif_out(netif_t *netif, ipaddr_t *ipaddr, pkt_buf_t *buf) {
+
     if (netif->link_layer) {
-        net_status_t status = ether_raw_out(netif, NET_PROTOCOL_ARP, ether_broadcast_addr(), buf);
+//        net_status_t status = ether_raw_out(netif, NET_PROTOCOL_ARP, ether_broadcast_addr(), buf);
+        net_status_t status = netif->link_layer->out(netif, ipaddr, buf);
         if (status < NET_OK) {
             debug(DEBUG_WARNING, "netif link out error");
             return status;

@@ -50,5 +50,14 @@ void ipaddr_copy(ipaddr_t *dest, const ipaddr_t *src) {
 ipaddr_t *ipaddr_get_empty() {
     static const ipaddr_t ipaddr_empty = {.type = IPADDR_V4, .q_addr = 0};
 
-    return (ipaddr_t *)&ipaddr_empty;
+    return (ipaddr_t *) &ipaddr_empty;
+}
+
+void ipaddr_from_buf(ipaddr_t *dest, uint8_t *buf) {
+    dest->type = IPADDR_V4;
+    dest->q_addr = *(uint32_t *) buf;
+}
+
+void ipaddr_to_buf(const ipaddr_t *src, uint8_t *buf) {
+    *(uint32_t *) buf = src->q_addr;
 }

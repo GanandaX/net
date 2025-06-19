@@ -16,7 +16,6 @@
 typedef struct _netif_hwaddr_t {
     uint8_t addr[NETIF_HWADDR_SIZE];
     uint8_t len;
-
 } netif_hwaddr_t;
 
 typedef enum _netif_type_t {
@@ -103,5 +102,7 @@ pkt_buf_t *netif_get_out(netif_t *netif, int tmo);
 net_status_t netif_out(netif_t *netif, ipaddr_t *ipaddr, pkt_buf_t *buf);
 
 net_status_t netif_register_layer(const link_layer_t *link_layer);
+
+uint8_t hw_addr_is_equal(uint8_t *src_hwaddr, uint8_t *dest_hwaddr);
 
 #endif //NET_NETIF_H

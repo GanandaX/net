@@ -25,6 +25,7 @@
 void debug_print(unsigned char input_level, char *filePath, const char *func, int line, const char *format, ...);
 void dbg_dump_hwaddr(const char *msg, const uint8_t *hwaddr, int len);
 void dbg_dump_ip(const char *msg, ipaddr_t *ipaddr);
+void dbg_dump_ip_buf(const char *msg, uint8_t *ipaddr);
 
 
 #define debug(level, format, ...) debug_print(level, __FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)

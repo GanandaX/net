@@ -11,6 +11,7 @@
 #include "loop.h"
 #include "ether.h"
 #include "timer.h"
+#include "arp.h"
 
 net_status_t net_init(void) {
     debug(DEBUG_INIT, "init net");
@@ -21,6 +22,7 @@ net_status_t net_init(void) {
     net_timer_init();
     loop_init();
     ether_init();
+    arp_init();
 
     return NET_OK;
 }
