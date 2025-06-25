@@ -289,6 +289,9 @@ void netif_set_default(netif_t *netif) {
     netif_default = netif;
 }
 
+netif_t *netif_get_default(void) {
+    return netif_default;
+}
 
 net_status_t netif_put_in(netif_t *netif, pkt_buf_t *buf, int tmo) {
     net_status_t status = fix_queue_write_in(&netif->in_q, buf, tmo);

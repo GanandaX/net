@@ -8,6 +8,7 @@
 #include "fix_queue.h"
 #include "m_block.h"
 #include "timer.h"
+#include "ipv4.h"
 
 // msg_block 存放具体信息, msg_queue表示消息队列
 static void *msg_table[EXMSG_MSG_CNT];
@@ -43,17 +44,23 @@ static net_status_t do_netif_in(exmsg_t *msg) {
     pkt_buf_t *buf;
     while (buf = netif_get_in(netif, -1)) {
         debug(DEBUG_INFO, "recv a packet");
-
+        net_status_t status;
         if (netif->link_layer) {
-            net_status_t status = netif->link_layer->in(netif, buf);
+            status = netif->link_layer->in(netif, buf);
             if (status < NET_OK) {
                 pkt_buf_free(buf);
                 debug(DEBUG_WARNING, "netif in failed, status= %d", status);
             }
         } else {
-            pkt_buf_free(buf);
+            status = ipv4_in(netif, buf);
+            if (status < NET_OK) {
+                pkt_buf_free(buf);
+                debug(DEBUG_WARNING, "netif in failed, status= %d", status);
+            }
         }
     }
+
+    return NET_OK;
 }
 
 static void work_thread(void *arg) {

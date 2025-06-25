@@ -4,6 +4,8 @@
 #include "pkt_buf.h"
 #include "m_block.h"
 #include "n_locker.h"
+#include "ipv4.h"
+#include "tools.h"
 
 static n_locker_t locker;
 static pkt_blk_t block_buffer[PKT_BLK_CNT];
@@ -573,4 +575,27 @@ void pkt_buf_inc_ref(pkt_buf_t *buf) {
     n_locker_lock(&locker);
     buf->ref += 1;
     n_locker_unlock(&locker);
+}
+
+uint16_t pkt_buf_checksum16(pkt_buf_t *buf, uint32_t length, uint32_t pre_sum, uint8_t complement) {
+    debug_assert(buf->ref != 0, "buf->ref == 0");
+
+    int remain_size = total_blk_remain_relate_to_pos(buf);
+    if (remain_size < length) {
+        debug(DEBUG_ERROR, "size error: %d < %d", remain_size, length);
+        return NET_ERROR_SIZE;
+    }
+
+    uint32_t sum = pre_sum;
+    while (length > 0) {
+        uint32_t blk_remain = pkt_current_blk_remain_size(buf);
+        int curr_remain = (blk_remain > length) ? length : blk_remain;
+
+        sum = checksum16(buf->blk_offset, curr_remain, sum, 0);
+
+        move_forward(buf, curr_remain);
+        length -= curr_remain;
+    }
+
+    return complement ? ~sum : sum;
 }

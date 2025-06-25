@@ -6,6 +6,7 @@
 #define NET_TOOLS_H
 
 #include "stdint.h"
+#include "net_status.h"
 
 static inline uint16_t swap_u16(uint16_t value) {
     uint16_t result = ((value & 0XFF) << 8) | ((value >> 8) & 0XFF);
@@ -29,5 +30,10 @@ static inline uint32_t swap_u32(uint32_t value) {
 #define x_htohl(v)  v
 #define x_ntohl(v)  v
 #endif
+
+net_status_t tools_init(void);
+
+uint16_t checksum16(void *buf, uint16_t len, uint32_t pre_sum, uint8_t complement);
+
 
 #endif //NET_TOOLS_H

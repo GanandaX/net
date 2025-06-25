@@ -9,6 +9,7 @@
 #include "tools.h"
 #include "protocol.h"
 #include "arp.h"
+#include "ipv4.h"
 
 #if DEBUG_DISP_ENABLED(DEBUG_ETHER)
 static void display_ether_pkt(char *title, ether_pkt_t *pkt, int total_size) {
@@ -47,7 +48,6 @@ void ether_close(struct _netif_t *netif) {
 }
 
 static net_status_t is_pkt_ok(ether_pkt_t *frame, int total_size) {
-
     if (total_size > sizeof(ether_hdr_t) + ETHER_MTU) {
         debug(DEBUG_WARNING, "frame size to big: %d", total_size);
         return NET_ERROR_SIZE;
@@ -62,7 +62,6 @@ static net_status_t is_pkt_ok(ether_pkt_t *frame, int total_size) {
 }
 
 net_status_t ether_in(struct _netif_t *netif, pkt_buf_t *buf) {
-
     debug(DEBUG_INFO, "ether in");
 
     pkt_buf_set_continue_space(buf, sizeof(ether_hdr_t));
@@ -86,6 +85,15 @@ net_status_t ether_in(struct _netif_t *netif, pkt_buf_t *buf) {
             return arp_in(netif, buf);
             break;
 
+        case NET_PROTOCOL_IPv4:
+            status = pkt_remove_header(buf, sizeof(ether_hdr_t));
+            if (status < NET_OK) {
+                debug(DEBUG_ERROR, "remove header failed.");
+                return status;
+            }
+
+            return ipv4_in(netif, buf);
+
         default:
             debug(DEBUG_WARNING, "unknow frame type");
             return NET_ERROR_NOT_SUPPORT;
@@ -97,7 +105,6 @@ net_status_t ether_in(struct _netif_t *netif, pkt_buf_t *buf) {
 }
 
 net_status_t ether_out(struct _netif_t *netif, ipaddr_t *dest, pkt_buf_t *buf) {
-
     if (ipaddr_is_equal(&netif->ipaddr, dest)) {
         return ether_raw_out(netif, NET_PROTOCOL_IPv4, netif->hwaddr.addr, buf);
     }
@@ -112,11 +119,11 @@ net_status_t ether_out(struct _netif_t *netif, ipaddr_t *dest, pkt_buf_t *buf) {
 
 net_status_t ether_init(void) {
     static const link_layer_t link_layer = {
-            .type = NETIF_TYPE_ETHER,
-            .open = ether_open,
-            .close = ether_close,
-            .in = ether_in,
-            .out = ether_out
+        .type = NETIF_TYPE_ETHER,
+        .open = ether_open,
+        .close = ether_close,
+        .in = ether_in,
+        .out = ether_out
     };
 
 
@@ -173,7 +180,6 @@ net_status_t ether_raw_out(netif_t *netif, protocol_t protocol, const uint8_t *d
     if (plat_memcmp(netif->hwaddr.addr, dest_hwaddr, NETIF_HWADDR_SIZE) == 0) {
         return netif_put_in(netif, buf, -1);
     } else {
-
         status = netif_put_out(netif, buf, -1);
         if (status < NET_OK) {
             debug(DEBUG_WARNING, "put pkt out failed");

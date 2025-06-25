@@ -63,9 +63,4 @@ net_status_t arp_resolve(netif_t *netif, ipaddr_t *ipaddr, pkt_buf_t *buf);
 void arp_clear(netif_t *netif);
 
 const uint8_t *arp_find(netif_t *netif, ipaddr_t *ipaddr);
-
-uint8_t ipaddr_is_local_broadcast(const ipaddr_t *ipaddr);
-
-uint8_t ipaddr_is_direct_broadcast(const ipaddr_t *ipaddr, const ipaddr_t *mask);
-
 #endif //NET_ARP_H

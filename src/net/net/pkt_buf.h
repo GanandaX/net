@@ -21,7 +21,7 @@ typedef struct _pkt_blk_t {
 typedef struct _pkt_buf_t {
     n_list_t list;
     n_list_node_t node;
-    int total_size;
+    uint32_t total_size;
 
     int pos;
     pkt_blk_t *cur_blk;
@@ -99,5 +99,7 @@ net_status_t pkt_buf_copy(pkt_buf_t *dest, pkt_buf_t *src, int size);
 net_status_t pkt_buf_fill(pkt_buf_t *buf, uint8_t val, int size);
 
 void pkt_buf_inc_ref(pkt_buf_t *buf);
+
+uint16_t pkt_buf_checksum16(pkt_buf_t *buf, uint32_t length, uint32_t pre_sum, uint8_t complement);
 
 #endif //PKT_BUF_H

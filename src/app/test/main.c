@@ -25,6 +25,7 @@
 #include "ether.h"
 #include "tools.h"
 #include "timer.h"
+#include "ipv4.h"
 
 pcap_data_t net_dev_0_data = {
         .ip = netdev0_phy_ip,
@@ -57,14 +58,18 @@ net_status_t net_dev_init() {
 
     pkt_buf_t *buf = pkt_buf_alloc(32);
     pkt_buf_fill(buf, 0X53, 32);
-    ipaddr_t dest;
+    ipaddr_t dest, src;
     ipaddr_from_str(&dest, friend0_ip);
-    netif_out(netif, &dest, buf);
+    ipaddr_from_str(&src, netdev0_ip);
+    // netif_out(netif, &dest, buf);
 
-    buf = pkt_buf_alloc(32);
-    pkt_buf_fill(buf, 0XA5, 32);
-    ipaddr_from_str(&dest, "192.168.134.255");
-    netif_out(netif, &dest, buf);
+
+    ipv4_out(0, &dest, &src, buf);
+
+    // buf = pkt_buf_alloc(32);
+    // pkt_buf_fill(buf, 0XA5, 32);
+    // ipaddr_from_str(&dest, "192.168.134.255");
+    // netif_out(netif, &dest, buf);
 
     debug(DEBUG_INFO, "init netif_0 done.");
     return NET_OK;

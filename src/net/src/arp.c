@@ -479,11 +479,3 @@ const uint8_t *arp_find(netif_t *netif, ipaddr_t *ipaddr) {
 
     return (const uint8_t *)0;
 }
-
-uint8_t ipaddr_is_local_broadcast(const ipaddr_t *ipaddr) {
-    return ipaddr->q_addr == 0XFFFFFFFF;
-}
-
-uint8_t ipaddr_is_direct_broadcast(const ipaddr_t *ipaddr, const ipaddr_t *mask) {
-    return ((ipaddr->q_addr & ~mask->q_addr) == ~mask->q_addr);
-}

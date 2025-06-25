@@ -17,7 +17,7 @@
 #define DEBUG_QUEUE DEBUG_ERROR
 #define DEBUG_NO_FREE_BLCK DEBUG_ERROR
 
-#define NET_ENDIAN_LITTLE
+#define NET_ENDIAN_LITTLE       1
 
 #define EXMSG_MSG_CNT           10
 #define LOCKER_TYPE             N_LOCKER_THREAD

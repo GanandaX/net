@@ -20,6 +20,9 @@ typedef enum _net_status_t {
     NET_ERROR_EXIST = -10,
     NET_ERROR_NOT_EXIST = -11,
     NET_ERROR_NOT_SUPPORT = -12,
+    NET_ERROR_PACKAGE = -13,
+    NET_ERROR_SYSTEM = -14,
+    NET_ERROR_UNREACH = -15,
 } net_status_t;
 
 
