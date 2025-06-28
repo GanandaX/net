@@ -74,7 +74,7 @@ void pkt_buf_free(pkt_buf_t *buf);
  */
 net_status_t pkt_buf_add_header(pkt_buf_t *buf, int size, add_header_mod add_mod);
 
-net_status_t pkt_remove_header(pkt_buf_t *buf, int size);
+net_status_t pkt_buf_remove_header(pkt_buf_t *buf, int size);
 
 net_status_t pkt_buf_resize(pkt_buf_t *buf, int size);
 

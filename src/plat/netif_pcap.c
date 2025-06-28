@@ -8,7 +8,7 @@
 
 
 static void rx_thread(void *arg) {
-    plat_printf("receive thread is running ...\n");
+    debug(DEBUG_INFO, "receive thread is running ...\n");
     netif_t *netif = (netif_t *) arg;
     pcap_t *pcap = (pcap_t *) netif->ops_data;
     while (1) {
@@ -39,7 +39,7 @@ static void rx_thread(void *arg) {
 }
 
 static void tx_thread(void *arg) {
-    plat_printf("transmit thread is running ...\n");
+    debug(DEBUG_INFO, "transmit thread is running ...\n");
 
     netif_t *netif = (netif_t *) arg;
     pcap_t *pcap = (pcap_t *) netif->ops_data;

@@ -11,7 +11,7 @@
 #include "net_status.h"
 #include "net_config.h"
 
-#define IPVA_ADDR_SIZE              4
+#define IPV4_ADDR_SIZE              4
 #define NET_VERSION_IPV4            4
 #define NET_IP_DEFAULT_TTL          64
 
@@ -35,12 +35,32 @@ typedef struct _ipv4_header_t {
 
     uint16_t total_len;
     uint16_t id;
-    uint16_t frag_all;
+
+    union {
+        struct {
+#if NET_ENDIAN_LITTLE
+            uint16_t frag_offset: 13;
+            uint16_t more: 1;
+            uint16_t disable: 1;
+            uint16_t reserved: 1;
+
+#else
+            uint16_t reserved: 1;
+            uint16_t disable: 1;
+            uint16_t more: 1;
+            uint16_t frag_offset: 13;
+#endif
+        };
+
+        uint16_t frag_all;
+    };
+
+
     uint8_t ttl;
     uint8_t protocol;
     uint16_t hdr_checksum;
-    uint8_t src_ip[IPVA_ADDR_SIZE];
-    uint8_t dest_ip[IPVA_ADDR_SIZE];
+    uint8_t src_ip[IPV4_ADDR_SIZE];
+    uint8_t dest_ip[IPV4_ADDR_SIZE];
 } ipv4_header_t;
 
 typedef struct _ipv4_pkt_t {
@@ -49,6 +69,16 @@ typedef struct _ipv4_pkt_t {
 } ipv4_pkt_t;
 
 #pragma pack()
+
+
+typedef struct _ip_frag_t {
+    ipaddr_t ip;
+    uint16_t id;
+    uint32_t tmo;
+    n_list_t buf_list;
+    n_list_node_t node;
+} ip_frag_t;
+
 
 net_status_t ipv4_init(void);
 

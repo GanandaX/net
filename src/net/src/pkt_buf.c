@@ -166,7 +166,7 @@ pkt_buf_t *pkt_buf_alloc(const int size) {
 
     pkt_blk_t *block = pkt_block_alloc_list(size, Header_Insertion);
     if (!block) {
-        debug(DEBUG_BUF, "no buffer for alloc block");
+        debug(DEBUG_WARNING, "no buffer for alloc block");
         pkt_blk_list_free(block);
         pkt_buf_free(buf);
 
@@ -272,7 +272,7 @@ net_status_t pkt_buf_add_header(pkt_buf_t *buf, int size, add_header_mod add_mod
     return NET_OK;
 }
 
-net_status_t pkt_remove_header(pkt_buf_t *buf, int size) {
+net_status_t pkt_buf_remove_header(pkt_buf_t *buf, int size) {
     debug_assert(buf->total_size >= size, "包大小 < 删除大小");
     debug_assert(buf->ref != 0, "buf->ref == 0");
 
@@ -371,6 +371,7 @@ net_status_t pkt_buf_join(pkt_buf_t *dest, pkt_buf_t *src) {
         pkt_buf_insert_blk_list(dest, blk, Tail_Insertion);
     }
 
+    debug(DEBUG_WARNING, "pkt free");
     pkt_buf_free(src);
     display_check_buf(dest);
     return NET_OK;

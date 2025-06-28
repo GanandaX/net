@@ -23,6 +23,7 @@ typedef enum _net_status_t {
     NET_ERROR_PACKAGE = -13,
     NET_ERROR_SYSTEM = -14,
     NET_ERROR_UNREACH = -15,
+    NET_ERROR_CHECKSUM = -16,
 } net_status_t;
 
 

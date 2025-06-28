@@ -48,14 +48,14 @@ static net_status_t do_netif_in(exmsg_t *msg) {
         if (netif->link_layer) {
             status = netif->link_layer->in(netif, buf);
             if (status < NET_OK) {
-                pkt_buf_free(buf);
                 debug(DEBUG_WARNING, "netif in failed, status= %d", status);
+                pkt_buf_free(buf);
             }
         } else {
             status = ipv4_in(netif, buf);
             if (status < NET_OK) {
-                pkt_buf_free(buf);
                 debug(DEBUG_WARNING, "netif in failed, status= %d", status);
+                pkt_buf_free(buf);
             }
         }
     }

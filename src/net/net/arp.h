@@ -63,4 +63,6 @@ net_status_t arp_resolve(netif_t *netif, ipaddr_t *ipaddr, pkt_buf_t *buf);
 void arp_clear(netif_t *netif);
 
 const uint8_t *arp_find(netif_t *netif, ipaddr_t *ipaddr);
+
+void arp_update_from_ipbuf(netif_t *netif, pkt_buf_t *buf);
 #endif //NET_ARP_H

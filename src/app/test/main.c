@@ -26,6 +26,7 @@
 #include "tools.h"
 #include "timer.h"
 #include "ipv4.h"
+#include "ping/ping.h"
 
 pcap_data_t net_dev_0_data = {
         .ip = netdev0_phy_ip,
@@ -64,7 +65,7 @@ net_status_t net_dev_init() {
     // netif_out(netif, &dest, buf);
 
 
-    ipv4_out(0, &dest, &src, buf);
+    // ipv4_out(0, &dest, &src, buf);
 
     // buf = pkt_buf_alloc(32);
     // pkt_buf_fill(buf, 0XA5, 32);
@@ -184,7 +185,7 @@ void pkt_buf_test() {
     }
 
     for (int i = 0; i < 16; ++i) {
-        pkt_remove_header(buf, 33);
+        pkt_buf_remove_header(buf, 33);
     }
 
     for (int i = 0; i < 16; ++i) {
@@ -192,7 +193,7 @@ void pkt_buf_test() {
     }
 
     for (int i = 0; i < 16; ++i) {
-        pkt_remove_header(buf, 33);
+        pkt_buf_remove_header(buf, 33);
     }
     pkt_buf_free(buf);
 
@@ -373,10 +374,22 @@ int main(void) {
     net_dev_init();
 //    basic_test();
 
-    net_start();
+    // net_start();
 
 
+    ping_t p;
+    // ping_run(&p, friend0_ip, 4, 64, 1000);
+
+    char cmd[32], param[32];
     while (1) {
+
+        //
+        printf(">> ");
+        scanf("%s%s", cmd, param);
+        if (!strcmp(cmd, "ping")) {
+            ping_run(&p, param, 1, 1000, 1000);
+        }
+
         sys_sleep(10);
     }
     printf("json");

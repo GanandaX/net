@@ -7,6 +7,7 @@
 #include "tools.h"
 #include "protocol.h"
 #include "timer.h"
+#include "ipv4.h"
 
 #define to_scan_cnt(tmo) (tmo / ARP_TIMER_TMO)
 
@@ -79,7 +80,6 @@ static void arp_pkt_display(arp_pkt_t *packet) {
 #endif
 
 static net_status_t cache_init(void) {
-
     n_list_init(&cache_list);
 
     plat_memset(cache_table, 0, sizeof(cache_table));
@@ -108,7 +108,6 @@ static void cache_clear_all(arp_entry_t *entry) {
  * @return
  */
 static arp_entry_t *cache_alloc(uint8_t force) {
-
     arp_entry_t *entry = m_block_alloc(&cache_block, -1);
     if (!entry && force) {
         n_list_node_t *node = n_list_remove_last(&cache_list);
@@ -154,14 +153,15 @@ static arp_entry_t *cache_find(uint8_t *ip) {
 }
 
 static net_status_t cache_send_all(arp_entry_t *entry) {
-    debug(DEBUG_INFO, "send all packet");
-    dbg_dump_ip_buf("ip:", entry->paddr);
+    dbg_dump_ip_buf("send all packet  ip:", entry->paddr);
+    plat_printf("\n");
 
     n_list_node_t *node;
     while ((node = n_list_remove_first(&entry->buf_list))) {
         pkt_buf_t *buf = n_list_entity(node, node, pkt_buf_t);
         net_status_t status = ether_raw_out(entry->netif, NET_PROTOCOL_IPv4, entry->hwaddr, buf);
         if (status < NET_OK) {
+            debug(DEBUG_WARNING, "ether raw out error: %d", status);
             pkt_buf_free(buf);
         }
     }
@@ -170,7 +170,6 @@ static net_status_t cache_send_all(arp_entry_t *entry) {
 
 static void cache_entry_set(arp_entry_t *entry, const uint8_t *hwaddr,
                             uint8_t *ip, netif_t *netif, uint8_t state) {
-
     plat_memcpy(entry->hwaddr, hwaddr, NETIF_HWADDR_SIZE);
     plat_memcpy(entry->paddr, ip, IPV4_ADDR_SIZE);
     entry->state = state;
@@ -186,7 +185,6 @@ static void cache_entry_set(arp_entry_t *entry, const uint8_t *hwaddr,
 
 
 static net_status_t cache_insert(netif_t *netif, uint8_t *ip, uint8_t *hw_addr, uint8_t force) {
-
     if (*(uint32_t *) ip == 0) {
         return NET_ERROR_NOT_SUPPORT;
     }
@@ -196,6 +194,7 @@ static net_status_t cache_insert(netif_t *netif, uint8_t *ip, uint8_t *hw_addr, 
     if (entry) {
         dbg_dump_ip_buf("update arp entry, ip: ", ip);
         dbg_dump_hwaddr("sender mac: ", hw_addr, NETIF_HWADDR_SIZE);
+        plat_printf("\n");
 
         cache_entry_set(entry, hw_addr, ip, netif, NET_ARP_RESOLVED);
         if (n_list_first(&cache_list) != &entry->node) {
@@ -216,6 +215,7 @@ static net_status_t cache_insert(netif_t *netif, uint8_t *ip, uint8_t *hw_addr, 
         cache_entry_set(entry, hw_addr, ip, netif, NET_ARP_RESOLVED);
         n_list_insert_first(&cache_list, &entry->node);
         dbg_dump_ip_buf("insert an entry entry, sender ip: ", ip);
+        plat_printf("\n");
     }
 
     display_arp_table();
@@ -294,14 +294,14 @@ net_status_t arp_init() {
 
 
 net_status_t arp_make_request(netif_t *netif, const ipaddr_t *dest_ip) {
-/*    uint8_t *ip = (uint8_t *) dest_ip->a_addr;
-    ip[0] = 0x01;
-    cache_insert(netif, ip, netif->hwaddr.addr, 1);
-    ip[0] = 0x02;
-    cache_insert(netif, ip, netif->hwaddr.addr, 1);
-    ip[0] = 0x03;
-    cache_insert(netif, ip, netif->hwaddr.addr, 1);
-    cache_insert(netif, ip, netif->hwaddr.addr, 1);*/
+    /*    uint8_t *ip = (uint8_t *) dest_ip->a_addr;
+        ip[0] = 0x01;
+        cache_insert(netif, ip, netif->hwaddr.addr, 1);
+        ip[0] = 0x02;
+        cache_insert(netif, ip, netif->hwaddr.addr, 1);
+        ip[0] = 0x03;
+        cache_insert(netif, ip, netif->hwaddr.addr, 1);
+        cache_insert(netif, ip, netif->hwaddr.addr, 1);*/
 
     pkt_buf_t *buf = pkt_buf_alloc(sizeof(arp_pkt_t));
     if (buf == (pkt_buf_t *) 0) {
@@ -324,6 +324,7 @@ net_status_t arp_make_request(netif_t *netif, const ipaddr_t *dest_ip) {
 
     net_status_t status = ether_raw_out(netif, NET_PROTOCOL_ARP, ether_broadcast_addr(), buf);
     if (status) {
+        debug(DEBUG_WARNING, "ether raw out error: %d", status);
         pkt_buf_free(buf);
     }
 
@@ -333,7 +334,6 @@ net_status_t arp_make_request(netif_t *netif, const ipaddr_t *dest_ip) {
 }
 
 net_status_t arp_make_reply(netif_t *netif, pkt_buf_t *buf) {
-
     arp_pkt_t *arp_packet = (arp_pkt_t *) pkt_buf_data(buf);
 
     arp_packet->opcode = x_htons(ARP_REPLY);
@@ -349,7 +349,6 @@ net_status_t arp_make_reply(netif_t *netif, pkt_buf_t *buf) {
 }
 
 static net_status_t is_pkt_ok(arp_pkt_t *arp_packet, uint16_t size, netif_t *netif) {
-
     if (size < sizeof(arp_pkt_t)) {
         debug(DEBUG_WARNING, "packet size error");
         return NET_ERROR_SIZE;
@@ -396,7 +395,6 @@ net_status_t arp_in(netif_t *netif, pkt_buf_t *buf) {
     ipaddr_t target_ip;
     ipaddr_from_buf(&target_ip, arp_packet->target_paddr);
     if (ipaddr_is_equal(&netif->ipaddr, &target_ip)) {
-
         if (!hw_addr_is_equal(arp_packet->target_hwaddr, netif->hwaddr.addr)) {
             debug(DEBUG_INFO, "received an arp for me buf mac error, send a gratuitous");
             return arp_make_gratuitous(netif);
@@ -415,12 +413,12 @@ net_status_t arp_in(netif_t *netif, pkt_buf_t *buf) {
     }
 
 
+    debug(DEBUG_WARNING, "pkt free");
     pkt_buf_free(buf);
     return NET_OK;
 }
 
 net_status_t arp_resolve(netif_t *netif, ipaddr_t *ipaddr, pkt_buf_t *buf) {
-
     arp_entry_t *entry = cache_find(ipaddr->a_addr);
 
     if (entry) {
@@ -472,10 +470,28 @@ const uint8_t *arp_find(netif_t *netif, ipaddr_t *ipaddr) {
         return ether_broadcast_addr();
     }
 
-    arp_entry_t  *entry = cache_find(ipaddr->a_addr);
+    arp_entry_t *entry = cache_find(ipaddr->a_addr);
     if (entry && (entry->state == NET_ARP_RESOLVED)) {
         return entry->hwaddr;
     }
 
-    return (const uint8_t *)0;
+    return (const uint8_t *) 0;
+}
+
+void arp_update_from_ipbuf(netif_t *netif, pkt_buf_t *buf) {
+    net_status_t status = pkt_buf_set_continue_space(buf, sizeof(ipv4_header_t) + sizeof(ether_hdr_t));
+    if (status != NET_OK) {
+        debug(DEBUG_WARNING, "adjust header failed.");
+        return;
+    }
+
+    pkt_buf_reset_acc(buf);
+    ether_hdr_t *ether_hdr = (ether_hdr_t *) pkt_buf_data(buf);
+    ipv4_header_t *ipv4_hdr = (ipv4_header_t *) (sizeof(ether_hdr_t) + (uint8_t *) ether_hdr);
+    if (ipv4_hdr->version != NET_VERSION_IPV4) {
+        debug(DEBUG_WARNING, "wrong ipv4 version");
+        return;
+    }
+
+    cache_insert(netif, ipv4_hdr->src_ip, ether_hdr->src, 0);
 }

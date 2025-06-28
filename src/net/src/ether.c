@@ -77,16 +77,15 @@ net_status_t ether_in(struct _netif_t *netif, pkt_buf_t *buf) {
 
     switch (x_ntohs(pkt->hdr.protocol)) {
         case NET_PROTOCOL_ARP:
-            status = pkt_remove_header(buf, sizeof(ether_hdr_t));
+            status = pkt_buf_remove_header(buf, sizeof(ether_hdr_t));
             if (status < NET_OK) {
                 debug(DEBUG_ERROR, "remove header failed.");
                 return status;
             }
             return arp_in(netif, buf);
-            break;
-
         case NET_PROTOCOL_IPv4:
-            status = pkt_remove_header(buf, sizeof(ether_hdr_t));
+            arp_update_from_ipbuf(netif, buf);
+            status = pkt_buf_remove_header(buf, sizeof(ether_hdr_t));
             if (status < NET_OK) {
                 debug(DEBUG_ERROR, "remove header failed.");
                 return status;
@@ -99,6 +98,7 @@ net_status_t ether_in(struct _netif_t *netif, pkt_buf_t *buf) {
             return NET_ERROR_NOT_SUPPORT;
     }
 
+    debug(DEBUG_WARNING, "pkt free");
     pkt_buf_free(buf);
 
     return NET_OK;
