@@ -2,9 +2,9 @@
 // Created by Administrator on 2025/6/28.
 //
 #include "ping.h"
-#include <winsock2.h>
 #include "sys_plat.h"
 #include "time.h"
+#include "net_api.h"
 
 uint16_t check_sum(void *buf, uint16_t len) {
     uint16_t *curr_buf = (uint16_t *) buf;
@@ -30,18 +30,19 @@ uint16_t check_sum(void *buf, uint16_t len) {
 void ping_run(ping_t *ping, const char *dest, uint16_t times, uint32_t size, uint16_t interval) {
     static uint16_t start_id = PING_DEFAULT_ID;
 
-
     WSADATA wsdata;
     WSAStartup(MAKEWORD(2, 2), &wsdata);
 
-    SOCKET s = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+    int s = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
     if (s < 0) {
         plat_printf("ping: open socket error");
         return;
     }
 
-
-    int tmo = 3000;
+    // int tmo = 3000;
+    struct timeval tmo;
+    tmo.tv_sec = 3;
+    tmo.tv_usec = 0;
     setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *) &tmo, sizeof(tmo));
 
     struct sockaddr_in addr;
@@ -50,7 +51,7 @@ void ping_run(ping_t *ping, const char *dest, uint16_t times, uint32_t size, uin
     addr.sin_addr.s_addr = inet_addr(dest);
     addr.sin_port = 0;
 
-    connect(s, (const struct sockaddr *)&addr, sizeof(addr));
+    // connect(s, (const struct sockaddr *)&addr, sizeof(addr));
 
     int fill_size = size > PING_BUFFER_SIZE ? PING_BUFFER_SIZE : size;
     for (int i = 0; i < fill_size; i++) {
@@ -66,13 +67,12 @@ void ping_run(ping_t *ping, const char *dest, uint16_t times, uint32_t size, uin
         ping->req.echo_hdr.seq = seq;
         ping->req.echo_hdr.checksum = check_sum(&ping->req, total_size);
 
-#if 0
         int size = sendto(s, (const char *) &ping->req, total_size, 0, (const struct sockaddr *) &addr, sizeof(addr));
-#endif
-
+#if 0
         int size = send(s, (const char *) &ping->req, total_size, 0);
+#endif
         if (size < 0) {
-            plat_printf("ping: sendto error\n");
+            plat_printf("ping: send to error\n");
             break;
         }
 
@@ -81,11 +81,11 @@ void ping_run(ping_t *ping, const char *dest, uint16_t times, uint32_t size, uin
         do {
             memset(&ping->reply, 0, sizeof(ping->reply));
             struct sockaddr_in from_addr;
-            int addr_len = sizeof(addr);
-#if 0
+            socklen_t addr_len = sizeof(addr);
             size = recvfrom(s, (char *) &ping->reply, sizeof(ping->reply), 0, (struct sockaddr *) &from_addr, &addr_len);
-#endif
+#if 0
             size = recv(s, (char *) &ping->reply, sizeof(ping->reply), 0);
+#endif
             if (size < 0) {
                 plat_printf("ping: recvfrom error\n");
                 break;

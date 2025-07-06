@@ -112,7 +112,7 @@ static arp_entry_t *cache_alloc(uint8_t force) {
     if (!entry && force) {
         n_list_node_t *node = n_list_remove_last(&cache_list);
         if (!node) {
-            debug(DEBUG_ERROR, "alloc arp entry failed.");
+            debug(DEBUG_ERROR, "force alloc arp entry failed.");
             return (arp_entry_t *) 0;
         }
         entry = n_list_entity(node, node, arp_entry_t);
@@ -165,8 +165,9 @@ static net_status_t cache_send_all(arp_entry_t *entry) {
             pkt_buf_free(buf);
         }
     }
-}
 
+    return NET_OK;
+}
 
 static void cache_entry_set(arp_entry_t *entry, const uint8_t *hwaddr,
                             uint8_t *ip, netif_t *netif, uint8_t state) {
@@ -182,7 +183,6 @@ static void cache_entry_set(arp_entry_t *entry, const uint8_t *hwaddr,
     }
     entry->retry = ARP_ENTRY_RETRY_CNT;
 }
-
 
 static net_status_t cache_insert(netif_t *netif, uint8_t *ip, uint8_t *hw_addr, uint8_t force) {
     if (*(uint32_t *) ip == 0) {
@@ -204,8 +204,8 @@ static net_status_t cache_insert(netif_t *netif, uint8_t *ip, uint8_t *hw_addr, 
         net_status_t status = cache_send_all(entry);
         if (status < NET_OK) {
             debug(DEBUG_WARNING, "send packet failed.");
-            return status;
         }
+        return status;
     } else {
         entry = cache_alloc(force);
         if (!entry) {
@@ -291,7 +291,6 @@ net_status_t arp_init() {
 
     return NET_OK;
 }
-
 
 net_status_t arp_make_request(netif_t *netif, const ipaddr_t *dest_ip) {
     /*    uint8_t *ip = (uint8_t *) dest_ip->a_addr;
@@ -411,7 +410,6 @@ net_status_t arp_in(netif_t *netif, pkt_buf_t *buf) {
         debug(DEBUG_INFO, "received an arp not for me, try to update.");
         cache_insert(netif, arp_packet->sender_paddr, arp_packet->sender_hwaddr, 0);
     }
-
 
     debug(DEBUG_WARNING, "pkt free");
     pkt_buf_free(buf);

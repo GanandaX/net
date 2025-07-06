@@ -15,7 +15,6 @@
 
 #pragma pack(1)
 typedef struct _arp_pkt_t {
-
     uint16_t htype;
     uint16_t ptype;
     uint8_t hwlen;
@@ -29,7 +28,7 @@ typedef struct _arp_pkt_t {
 #pragma pack()
 
 typedef struct _arp_entry_t {
-    // 目的ip和端口
+    // 目的ip和硬件地址
     uint8_t paddr[IPV4_ADDR_SIZE];
     uint8_t hwaddr[NETIF_HWADDR_SIZE];
 
@@ -39,11 +38,11 @@ typedef struct _arp_entry_t {
         NET_ARP_RESOLVED,
     } state;
 
-    uint32_t tmo;
-    uint32_t retry;
+    uint32_t tmo;           // 超时记时
+    uint32_t retry;         // 重复次数
 
     n_list_node_t node;
-    n_list_t buf_list;
+    n_list_t buf_list;      // 等待确定paddr对应mac地址后发送的有效数据包
 
     netif_t *netif;
 } arp_entry_t;

@@ -21,7 +21,9 @@ typedef struct _ipaddr_t {
     };
 } ipaddr_t;
 
-void ipaddr_set_any(ipaddr_t *any);
+void ipaddr_set_any(ipaddr_t *ip);
+
+uint8_t ipaddr_is_any(ipaddr_t *ip);
 
 net_status_t ipaddr_from_str(ipaddr_t *dest, const char *str);
 

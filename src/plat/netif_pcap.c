@@ -30,7 +30,7 @@ static void rx_thread(void *arg) {
             continue;
         }
 
-        if (netif_put_in(netif, buf, 0) < 0) {
+        if (netif_put_in(netif, buf, -1) < 0) {
             debug(DEBUG_WARNING, "netif: %s in_q fill\n", netif->name);
             pkt_buf_free(buf);
             continue;
@@ -46,7 +46,6 @@ static void tx_thread(void *arg) {
 
     static uint8_t buffer[1500 + 6 + 6 + 2];
     while (1) {
-
         pkt_buf_t *buf = netif_get_out(netif, 0);
 
         if (buf == (pkt_buf_t *) 0) {
@@ -62,7 +61,6 @@ static void tx_thread(void *arg) {
             debug(DEBUG_ERROR, "pcap send failed: %s", pcap_geterr(pcap));
             debug(DEBUG_ERROR, "pcap send failed, size: %d", total_size);
         }
-
     }
 }
 
@@ -94,14 +92,11 @@ static void netif_pcap_close(netif_t *netif) {
 
 
 static net_status_t netif_pcap_xmit(netif_t *netif) {
-
-
-
     return NET_OK;
 }
 
 const netif_ops_t net_dev_ops = {
-        .open = netif_pcap_open,
-        .close = netif_pcap_close,
-        .xmit = netif_pcap_xmit,
+    .open = netif_pcap_open,
+    .close = netif_pcap_close,
+    .xmit = netif_pcap_xmit,
 };

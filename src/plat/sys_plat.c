@@ -219,7 +219,6 @@ int sys_sem_wait(sys_sem_t sem, uint32_t tmo_ms) {
         return -4;
     }
 
-    printf("wait error\n");
     return -1;
 }
 

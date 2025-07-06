@@ -19,7 +19,6 @@ static netif_t *netif_default;
 static const link_layer_t *link_layers[NETIF_TYPE_SIZE];
 
 #if DEBUG_DISP_ENABLED(DEBUG_NETIF)
-
 static void display_netif_list() {
     plat_printf("netif list: \n");
 
@@ -72,7 +71,6 @@ static void display_netif_list() {
 
 
 net_status_t netif_init(void) {
-
     debug(DEBUG_NETIF, "netif init");
 
     n_list_init(&netif_list);
@@ -81,14 +79,12 @@ net_status_t netif_init(void) {
 
     netif_default = (netif_t *) 0;
 
-
     plat_memset((void *) link_layers, 0, sizeof(link_layers));
     debug(DEBUG_NETIF, "init done");
     return NET_OK;
 }
 
 net_status_t netif_register_layer(const link_layer_t *link_layer) {
-
     if (link_layer->type < 0 || link_layer->type >= NETIF_TYPE_SIZE) {
         debug(DEBUG_ERROR, "type error");
         return NET_ERROR_PARAM;
@@ -117,7 +113,6 @@ static const link_layer_t *netif_get_layer(netif_type_t type) {
 }
 
 netif_t *netif_open(const char *dev_name, struct _netif_ops_t *ops, void *ops_data) {
-
     netif_t *netif = (netif_t *) m_block_alloc(&netif_block, -1);
 
     if (!netif) {
@@ -180,7 +175,7 @@ netif_t *netif_open(const char *dev_name, struct _netif_ops_t *ops, void *ops_da
 
     return netif;
 
-    free_return:
+free_return:
     if (netif->state == NETIF_OPENED) {
         netif->ops->close(netif);
     }
@@ -201,7 +196,6 @@ net_status_t netif_set_addr(netif_t *netif, ipaddr_t *ip, ipaddr_t *mask, ipaddr
 }
 
 net_status_t netif_set_hwaddr(netif_t *netif, const char *hwaddr, int len) {
-
     plat_memcpy(netif->hwaddr.addr, hwaddr, len);
 
     netif->hwaddr.len = len;
@@ -339,9 +333,8 @@ pkt_buf_t *netif_get_out(netif_t *netif, int tmo) {
 }
 
 net_status_t netif_out(netif_t *netif, ipaddr_t *ipaddr, pkt_buf_t *buf) {
-
     if (netif->link_layer) {
-//        net_status_t status = ether_raw_out(netif, NET_PROTOCOL_ARP, ether_broadcast_addr(), buf);
+        //        net_status_t status = ether_raw_out(netif, NET_PROTOCOL_ARP, ether_broadcast_addr(), buf);
         net_status_t status = netif->link_layer->out(netif, ipaddr, buf);
         if (status < NET_OK) {
             debug(DEBUG_WARNING, "netif link out error");

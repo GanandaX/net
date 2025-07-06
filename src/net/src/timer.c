@@ -7,7 +7,6 @@
 
 static n_list_t timer_list;
 
-
 #if DEBUG_DISP_ENABLED(DEBUG_TIMER)
 
 static void display_timer_list() {
@@ -32,12 +31,10 @@ static void display_timer_list() {
 #define display_timer_list()
 #endif
 
-
 net_status_t net_timer_init(void) {
     debug(DEBUG_INFO, "timer init.");
 
     n_list_init(&timer_list);
-
 
     debug(DEBUG_INFO, "timer init done.");
     return NET_OK;
@@ -111,6 +108,7 @@ net_status_t net_timer_remove(net_timer_t *timer) {
     n_list_remove(&timer_list, &timer->node);
 
     display_timer_list();
+    return NET_OK;
 }
 
 

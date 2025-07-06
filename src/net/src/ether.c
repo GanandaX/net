@@ -97,11 +97,6 @@ net_status_t ether_in(struct _netif_t *netif, pkt_buf_t *buf) {
             debug(DEBUG_WARNING, "unknow frame type");
             return NET_ERROR_NOT_SUPPORT;
     }
-
-    debug(DEBUG_WARNING, "pkt free");
-    pkt_buf_free(buf);
-
-    return NET_OK;
 }
 
 net_status_t ether_out(struct _netif_t *netif, ipaddr_t *dest, pkt_buf_t *buf) {
@@ -125,7 +120,6 @@ net_status_t ether_init(void) {
         .in = ether_in,
         .out = ether_out
     };
-
 
     debug(DEBUG_INFO, "init ether");
 

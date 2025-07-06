@@ -5,6 +5,7 @@
 #ifndef NET_CONFIG_H
 #define NET_CONFIG_H
 
+#define DEBUG_RAW DEBUG_ERROR
 #define DEBUG_IP DEBUG_ERROR
 #define DEBUG_ICMPV4 DEBUG_INFO
 #define DEBUG_ARP DEBUG_INFO
@@ -46,5 +47,7 @@
 #define ARP_ENTRY_RETRY_CNT     5
 #define IP_FRAGS_MAX_CNT        5
 #define IP_FRAG_MAX_BUF_CNT     10
+
+#define RAW_MAX_CNT             10
 
 #endif //NET_CONFIG_H

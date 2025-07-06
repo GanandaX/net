@@ -13,6 +13,8 @@
 #include "timer.h"
 #include "arp.h"
 #include "ipv4.h"
+#include "sock.h"
+#include "raw.h"
 
 net_status_t net_init(void) {
     debug(DEBUG_INIT, "init net");
@@ -25,6 +27,8 @@ net_status_t net_init(void) {
     ether_init();
     arp_init();
     ipv4_init();
+    socket_init();
+    raw_init();
 
     return NET_OK;
 }

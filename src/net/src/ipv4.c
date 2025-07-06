@@ -9,6 +9,7 @@
 #include "protocol.h"
 #include "tools.h"
 #include "netif.h"
+#include "raw.h"
 
 static uint16_t packet_id = 0;
 static ip_frag_t frag_array[IP_FRAGS_MAX_CNT];
@@ -318,13 +319,16 @@ static net_status_t ip_normal_in(netif_t *netif, pkt_buf_t *buf, ipaddr_t *src, 
             break;
 
         default:
-            debug(DEBUG_WARNING, "invalid protocol");
+            status =  raw_in(buf);
+            if (status < 0) {
+                debug(DEBUG_WARNING, "raw is error");
+                return status;
+            }
             break;
     }
 
     return NET_ERROR_UNREACH;
 }
-
 
 static net_status_t ip_frag_in(netif_t *netif, pkt_buf_t *buf, ipaddr_t *src_ip, ipaddr_t *dest_ip) {
     ipv4_pkt_t *curr = (ipv4_pkt_t *) pkt_buf_data(buf);

@@ -27,14 +27,14 @@
 #include "timer.h"
 #include "ipv4.h"
 #include "ping/ping.h"
+#include "ex_msg.h"
 
 pcap_data_t net_dev_0_data = {
-        .ip = netdev0_phy_ip,
-        .hwaddr = netdev0_hwaddr
+    .ip = netdev0_phy_ip,
+    .hwaddr = netdev0_hwaddr
 };
 
 net_status_t net_dev_init() {
-
     netif_t *netif = netif_open("netif_0", &net_dev_ops, &net_dev_0_data);
     if (!netif) {
         debug(DEBUG_ERROR, "open netif_0 error");
@@ -324,10 +324,10 @@ void timer3_proc(net_timer_t *timer, void *arg) {
 void timer_test() {
     static net_timer_t t0, t1, t2, t3;
 
-    net_timer_add(&t0, "t0", timer0_proc, (void *)0, 200, !NET_TIMER_RELOAD);
-    net_timer_add(&t1, "t1", timer1_proc, (void *)0, 1000, NET_TIMER_RELOAD);
-    net_timer_add(&t2, "t2", timer2_proc, (void *)0, 1000, NET_TIMER_RELOAD);
-    net_timer_add(&t3, "t3", timer3_proc, (void *)0, 4000, NET_TIMER_RELOAD);
+    net_timer_add(&t0, "t0", timer0_proc, (void *) 0, 200, !NET_TIMER_RELOAD);
+    net_timer_add(&t1, "t1", timer1_proc, (void *) 0, 1000, NET_TIMER_RELOAD);
+    net_timer_add(&t2, "t2", timer2_proc, (void *) 0, 1000, NET_TIMER_RELOAD);
+    net_timer_add(&t3, "t3", timer3_proc, (void *) 0, 4000, NET_TIMER_RELOAD);
 
     net_timer_remove(&t0);
 }
@@ -335,16 +335,19 @@ void timer_test() {
 void basic_test() {
     // n_list_test();
     // m_block_test();
-//    pkt_buf_test();
+    //    pkt_buf_test();
 
-//    netif_t *netif = netif_open("pcap");
+    //    netif_t *netif = netif_open("pcap");
 
     uint32_t v1 = x_ntohl(0X12345678);
     uint16_t v2 = x_ntohs(0X1234);
-//    loop_init();
+    //    loop_init();
 
     timer_test();
 }
+
+
+net_status_t test_func(struct func_msg_t *msg);
 
 int main(void) {
     setvbuf(stdout, NULL, _IONBF, 0); // 设置 stdout 为无缓冲
@@ -372,17 +375,18 @@ int main(void) {
     net_init();
 
     net_dev_init();
-//    basic_test();
+    //    basic_test();
 
-    // net_start();
-
+    net_start();
 
     ping_t p;
-    // ping_run(&p, friend0_ip, 4, 64, 1000);
+    ping_run(&p, friend0_ip, 1, 64, 1000);
+
+    int arg = 0X1234;
+    net_status_t status = exmsg_func_exec(test_func, &arg);
 
     char cmd[32], param[32];
     while (1) {
-
         //
         printf(">> ");
         scanf("%s%s", cmd, param);
@@ -392,6 +396,5 @@ int main(void) {
 
         sys_sleep(10);
     }
-    printf("json");
     return 1;
 }

@@ -16,6 +16,12 @@ static fix_queue_t msg_queue;
 static exmsg_t msg_buff[EXMSG_MSG_CNT];
 static m_block_t msg_block;
 
+net_status_t test_func(func_msg_t *msg) {
+    printf("hello, 1234: 0X%x\n", *(int *) msg->param);
+
+    return NET_OK;
+}
+
 net_status_t ex_msg_init() {
     debug_info(DEBUG_MSG, "exmsg init");
     net_status_t status = fix_queue_init(&msg_queue, msg_table,
@@ -63,6 +69,17 @@ static net_status_t do_netif_in(exmsg_t *msg) {
     return NET_OK;
 }
 
+static net_status_t do_func(exmsg_t *msg) {
+    func_msg_t *func_msg = msg->func;
+
+    debug(DEBUG_INFO, "call func");
+    func_msg->status = func_msg->func(func_msg);
+    sys_sem_notify(func_msg->wait_sem);
+    debug(DEBUG_INFO, "call func done");
+
+    return NET_OK;
+}
+
 static void work_thread(void *arg) {
     debug_info(DEBUG_MSG, "ex_msg is running ...");
 
@@ -78,6 +95,9 @@ static void work_thread(void *arg) {
             switch (msg->type) {
                 case NET_EXMSG_NETIF_IN:
                     do_netif_in(msg);
+                    break;
+                case NET_EXMSG_FUN:
+                    do_func(msg);
                     break;
                 default:
                     break;
@@ -116,7 +136,44 @@ net_status_t exmsg_netif_in(netif_t *netif) {
     if (status != NET_OK) {
         debug_warning(DEBUG_MSG, "fix queue write failed may be full");
         m_block_free(&msg_block, msg);
+        return status;
     }
 
     return status;
+}
+
+net_status_t exmsg_func_exec(exmsg_func_t func, void *param) {
+    func_msg_t func_msg;
+    func_msg.func = func;
+    func_msg.param = param;
+    func_msg.status = NET_OK;
+    func_msg.thread = sys_thread_self();
+    func_msg.wait_sem = sys_sem_create(0);
+    if (func_msg.wait_sem == SYS_SEM_INVALID) {
+        debug(DEBUG_WARNING, "exmsg wait sem create failed");
+        return NET_ERROR_MEM;
+    }
+
+    exmsg_t *msg = m_block_alloc(&msg_block, 0);
+    if (!msg) {
+        debug_error(DEBUG_MSG, "exmsg alloc failed");
+        sys_sem_free(func_msg.wait_sem);
+        return NET_ERROR_MEM;
+    }
+    msg->type = NET_EXMSG_FUN;
+    msg->func = &func_msg;
+
+    debug(DEBUG_INFO, "exmsg exec func start: %p", func);
+
+    const net_status_t status = fix_queue_write_in(&msg_queue, msg, 0);
+    if (status != NET_OK) {
+        debug_warning(DEBUG_MSG, "fix queue write failed may be full");
+        sys_sem_free(func_msg.wait_sem);
+        m_block_free(&msg_block, msg);
+        return status;
+    }
+
+    sys_sem_wait(func_msg.wait_sem, 0);
+    debug(DEBUG_INFO, "exmsg exec func done. status: %d", func_msg.status);
+    return func_msg.status;
 }

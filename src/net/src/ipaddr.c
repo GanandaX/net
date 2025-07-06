@@ -10,6 +10,10 @@ void ipaddr_set_any(ipaddr_t *ip) {
     ip->q_addr = 0;
 }
 
+uint8_t ipaddr_is_any(ipaddr_t *ip) {
+    return ip->q_addr == 0;
+}
+
 net_status_t ipaddr_from_str(ipaddr_t *dest, const char *str) {
     if (!dest || !str) {
         return NET_ERROR_PARAM;
@@ -84,8 +88,8 @@ uint8_t ipaddr_is_match(const ipaddr_t *dest, const ipaddr_t *src, const ipaddr_
         return 1;
     }
 
-    ipaddr_t dest_net =  ipaddr_get_net(dest, mask);
-    ipaddr_t src_net =  ipaddr_get_net(src, mask);
+    ipaddr_t dest_net = ipaddr_get_net(dest, mask);
+    ipaddr_t src_net = ipaddr_get_net(src, mask);
     if (ipaddr_is_direct_broadcast(dest, mask) && ipaddr_is_equal(&dest_net, &src_net)) {
         return 1;
     }

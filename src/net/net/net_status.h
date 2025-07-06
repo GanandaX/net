@@ -7,6 +7,7 @@
 
 
 typedef enum _net_status_t {
+    NET_ERROR_NEED_WAIT = 1,
     NET_OK = 0,
     NET_ERROR = -1,
     NET_ERROR_MEM = -2,

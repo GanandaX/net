@@ -584,7 +584,7 @@ uint16_t pkt_buf_checksum16(pkt_buf_t *buf, uint32_t length, uint32_t pre_sum, u
     int remain_size = total_blk_remain_relate_to_pos(buf);
     if (remain_size < length) {
         debug(DEBUG_ERROR, "size error: %d < %d", remain_size, length);
-        return NET_ERROR_SIZE;
+        return -1;
     }
 
     uint32_t sum = pre_sum;

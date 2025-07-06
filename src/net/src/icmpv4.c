@@ -4,6 +4,7 @@
 #include "icmpv4.h"
 #include "ipv4.h"
 #include "protocol.h"
+#include "raw.h"
 
 
 #if DEBUG_DISP_ENABLED(DEBUG_ICMPV4)
@@ -78,33 +79,37 @@ net_status_t icmpv4_in(ipaddr_t *src, ipaddr_t *dst, pkt_buf_t *buf) {
 
     ip_pkt = (ipv4_pkt_t *) pkt_buf_data(buf);
 
-    status = pkt_buf_remove_header(buf, iphdr_size);
-    if (status < NET_OK) {
-        debug(DEBUG_WARNING, "icmpv4 in: pkt_buf_remove_header failed");
-        return status;
-    }
-
     pkt_buf_reset_acc(buf);
-    icmpv4_pkt_t *icmp_pkt = (icmpv4_pkt_t *) pkt_buf_data(buf);
+    icmpv4_pkt_t *icmp_pkt = (icmpv4_pkt_t *) (pkt_buf_data(buf) + iphdr_size);
+    pkt_buf_seek(buf, iphdr_size);
 
-    if ((status = is_pkt_ok(icmp_pkt, buf->total_size, buf)) < 0) {
+    if ((status = is_pkt_ok(icmp_pkt, buf->total_size - iphdr_size, buf)) < 0) {
         debug(DEBUG_WARNING, "icmpv4 in: is_pkt_ok failed");
         return status;
     }
 
     switch (icmp_pkt->hdr.type) {
         case ICMPV4_ECHO_REQUEST:
-            display_icmp("icmpv4 echo", icmp_pkt);
+            status = pkt_buf_remove_header(buf, iphdr_size);
+            if (status < NET_OK) {
+                debug(DEBUG_WARNING, "icmpv4 in: pkt_buf_remove_header failed");
+                return status;
+            }
+            pkt_buf_reset_acc(buf);
+
             return icmpv4_echo_reply(src, dst, buf);
 
         default:
-            debug(DEBUG_WARNING, "pkt free");
-            pkt_buf_free(buf);
+            status = raw_in(buf);
+            if (status < NET_OK) {
+                debug(DEBUG_WARNING, "icmpv4 in: raw_in failed");
+                return status;
+            }
             return NET_OK;
     }
 }
 
-net_status_t icmpv4_out_unreach(ipaddr_t *dest_ip,  ipaddr_t *src_ip, uint8_t code, pkt_buf_t *ip_buf) {
+net_status_t icmpv4_out_unreach(ipaddr_t *dest_ip, ipaddr_t *src_ip, uint8_t code, pkt_buf_t *ip_buf) {
     uint32_t copy_size = ipv4_hdr_size((ipv4_pkt_t *) (pkt_buf_data(ip_buf))) + 576;
     if (copy_size > ip_buf->total_size) {
         copy_size = ip_buf->total_size;
